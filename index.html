@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DOTA HUB — Live Database Platform</title>
+  <title>DOTA HUB — Live Database</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -45,20 +45,14 @@
   <!-- КОНТЕНТ -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-    <!-- ИНДИКАТОР ЗАГРУЗКИ -->
-    <div id="loadingIndicator" class="text-center py-12 text-zinc-400">
-      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-rose-500 mb-3"></i>
-      <p class="text-xs font-medium">Загрузка данных из Supabase...</p>
-    </div>
-
     <!-- 1. ТАБЛИЦА РЕЙТИНГА КОМАНД -->
-    <section id="page-teams-ranking" class="hidden space-y-4">
+    <section id="page-teams-ranking" class="space-y-4">
       <div class="border-b border-zinc-800 pb-3 flex items-center justify-between">
         <div>
           <h1 class="text-xl font-black text-white flex items-center gap-2">
             <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
           </h1>
-          <p class="text-xs text-zinc-400">Рейтинг профессиональных клубов из базы данных (кликните по строке)</p>
+          <p class="text-xs text-zinc-400">Рейтинг профессиональных клубов (кликните по строке)</p>
         </div>
       </div>
 
@@ -79,7 +73,7 @@
       </div>
     </section>
 
-    <!-- 2. СТРАНИЦА КОМАНДЫ (ROSTER 5X5) -->
+    <!-- 2. СТРАНИЦА КОМАНДЫ (С ЛОКАЛЬНЫМИ ФОТО) -->
     <section id="page-team-details" class="hidden space-y-6">
       <button onclick="navigate('teams-ranking')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
         <i class="fa-solid fa-arrow-left"></i> Назад к рейтингу команд
@@ -89,7 +83,9 @@
       <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-6 shadow-xl">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           <div class="lg:col-span-4 flex items-center gap-5">
-            <div id="teamLogoWrap" class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-3xl font-black text-white flex-shrink-0 shadow-lg"></div>
+            <div class="w-24 h-24 rounded-2xl bg-[#121520] border border-zinc-700 p-2 flex items-center justify-center flex-shrink-0 shadow-lg overflow-hidden">
+              <img src="parivision.png" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/100?text=LOGO'">
+            </div>
             <div>
               <h2 id="teamHeaderName" class="text-2xl font-black text-white"></h2>
               <div class="flex items-center gap-2 mt-1">
@@ -123,7 +119,7 @@
         </div>
       </div>
 
-      <!-- MAIN ROSTER 5X5 -->
+      <!-- MAIN ROSTER С РЕАЛЬНЫМИ ФОТО -->
       <div class="space-y-3">
         <h3 class="font-black text-sm uppercase tracking-wider text-white flex items-center gap-2">
           <i class="fa-solid fa-users text-rose-500"></i> MAIN ROSTER (АКТИВНЫЙ СОСТАВ 5X5)
@@ -148,6 +144,7 @@
 
   <script>
     const SUPABASE_URL = 'https://waybpnkztszkldlwxuge.supabase.co';
+    // ОБЯЗАТЕЛЬНО ВСТАВЬТЕ СЮДА ВАШ КЛЮЧ:
     const SUPABASE_KEY = 'sb_publishable_-G2uSAT4Hps3rEzaWWNeiQ_QBvkYl8C';
 
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -155,14 +152,19 @@
     let TEAMS_CACHE = [];
     let PLAYERS_CACHE = [];
 
-    // Градиенты для ролей игроков
-    const ROLE_GRADIENTS = {
-      '1': 'from-emerald-600 to-teal-900',
-      '2': 'from-sky-600 to-blue-900',
-      '3': 'from-amber-600 to-orange-900',
-      '4': 'from-purple-600 to-indigo-900',
-      '5': 'from-rose-600 to-pink-900'
+    // Привязка локальных фото игроков (файлов, которые вы только что загрузили)
+    const LOCAL_PHOTOS = {
+      'satanic': 'satanic.jpg',
+      'noone': 'noone.jpg',
+      'noticed': 'noticed.jpg',
+      '9class': '9class.jpg',
+      'dukalis': 'dukalis.jpg'
     };
+
+    // Генерация аватара-заглушки для игроков из других команд
+    function getPlayerAvatarSvg(initials) {
+      return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%233f3f46"/><stop offset="100%" stop-color="%2318181b"/></linearGradient></defs><rect width="300" height="300" fill="url(%23g)"/><circle cx="150" cy="115" r="55" fill="%23ffffff" opacity="0.8"/><path d="M70 260 C70 190 230 190 230 260 Z" fill="%23ffffff" opacity="0.8"/><text x="150" y="285" font-family="Arial, sans-serif" font-weight="900" font-size="28" fill="%23ffffff" text-anchor="middle">${encodeURIComponent(initials)}</text></svg>`;
+    }
 
     async function loadDataFromSupabase() {
       try {
@@ -177,12 +179,9 @@
         TEAMS_CACHE = teamsRes.data || [];
         PLAYERS_CACHE = playersRes.data || [];
 
-        document.getElementById('loadingIndicator').classList.add('hidden');
         navigate('teams-ranking');
       } catch (err) {
-        document.getElementById('loadingIndicator').innerHTML = `
-          <div class="text-rose-500 font-bold">Ошибка подключения: ${err.message}</div>
-        `;
+        console.error(err);
       }
     }
 
@@ -237,7 +236,6 @@
       navigate('team-details');
 
       document.getElementById('teamHeaderName').textContent = t.name;
-      document.getElementById('teamLogoWrap').textContent = t.name.substring(0,2).toUpperCase();
       document.getElementById('teamRegionBadge').textContent = `${t.region_flag || ''} ${t.region}`;
       document.getElementById('teamRankPos').textContent = `Ранг #${t.rank}`;
       document.getElementById('teamMapsPlayed').textContent = `${t.games} (за год)`;
@@ -247,33 +245,35 @@
       document.getElementById('teamWinBar').style.width = `${t.winrate}%`;
       document.getElementById('teamLossBar').style.width = `${100 - t.winrate}%`;
 
+      // Генерация карточек с вашими фото!
       const rosterCards = document.getElementById('mainRosterCards');
       rosterCards.innerHTML = '';
       teamPlayers.forEach(p => {
-        const grad = ROLE_GRADIENTS[p.pos] || 'from-zinc-700 to-zinc-900';
+        // Берем имя файла из словаря, если нет — генерируем заглушку
+        const photoSrc = LOCAL_PHOTOS[p.id] || getPlayerAvatarSvg(p.nick.substring(0,2));
+        
         rosterCards.innerHTML += `
-          <div class="bg-[#121520] rounded-2xl p-4 border border-zinc-800 hover:border-zinc-600 transition flex flex-col justify-between shadow-xl">
+          <div class="bg-white rounded-2xl p-3.5 shadow-2xl border border-zinc-200 text-zinc-900 flex flex-col justify-between overflow-hidden">
             <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-[10px] font-black uppercase bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded tracking-wider">${p.role}</span>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-black uppercase bg-zinc-900 text-white px-2 py-0.5 rounded tracking-wider">${p.role}</span>
                 <span class="text-xs font-bold">${p.country_flag || '🌍'}</span>
               </div>
               
-              <!-- Карточка аватара с номером позиции -->
-              <div class="relative w-full h-36 rounded-xl bg-gradient-to-tr ${grad} mb-3 flex items-center justify-center shadow-inner">
-                <span class="text-3xl font-black text-white/90 tracking-wider">${p.nick.substring(0,3).toUpperCase()}</span>
-                <div class="absolute bottom-1.5 right-1.5 bg-black/60 backdrop-blur-sm text-amber-400 font-mono font-bold text-[10px] px-2 py-0.5 rounded">
+              <div class="relative w-full h-44 rounded-xl overflow-hidden bg-zinc-100 mb-3 border border-zinc-200 shadow-inner">
+                <img src="${photoSrc}" class="w-full h-full object-cover object-top" alt="${p.nick}">
+                <div class="absolute bottom-1.5 right-1.5 bg-amber-500 text-black font-black text-[9px] px-1.5 py-0.5 rounded shadow">
                   Pos ${p.pos}
                 </div>
               </div>
               
-              <h4 class="font-black text-base text-white leading-tight">${p.nick}</h4>
-              <p class="text-[11px] text-zinc-400 mt-0.5 font-medium">${p.real_name || ''}</p>
+              <h4 class="font-black text-base text-zinc-950 leading-tight">${p.nick}</h4>
+              <p class="text-[11px] text-zinc-500 font-medium">${p.real_name || ''}</p>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-zinc-800 flex justify-between items-center text-xs">
-              <span class="text-zinc-500 text-[10px]">Винрейт: <b class="text-emerald-400">${p.winrate || '60%'}</b></span>
-              <span class="text-amber-400 font-mono text-[11px]">${p.prize || ''}</span>
+            <div class="mt-3 pt-2.5 border-t border-zinc-100 flex justify-between items-center text-xs">
+              <span class="text-zinc-500 text-[10px]">Винрейт: <b class="text-emerald-600">${p.winrate || '60%'}</b></span>
+              <span class="text-rose-600 font-bold text-xs cursor-pointer">Профиль →</span>
             </div>
           </div>
         `;
@@ -284,11 +284,11 @@
       const catalog = document.getElementById('proPlayersCatalog');
       catalog.innerHTML = '';
       PLAYERS_CACHE.forEach(p => {
-        const grad = ROLE_GRADIENTS[p.pos] || 'from-zinc-700 to-zinc-900';
+        const photoSrc = LOCAL_PHOTOS[p.id] || getPlayerAvatarSvg(p.nick.substring(0,2));
         catalog.innerHTML += `
           <div class="bg-[#121520] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl transition group shadow-lg text-center">
-            <div class="w-16 h-16 rounded-xl bg-gradient-to-tr ${grad} mx-auto mb-3 flex items-center justify-center font-black text-white text-lg shadow">
-              ${p.nick.substring(0,2).toUpperCase()}
+            <div class="w-20 h-20 rounded-2xl overflow-hidden mx-auto mb-3 border border-zinc-700 bg-zinc-900 shadow-inner">
+              <img src="${photoSrc}" class="w-full h-full object-cover object-top">
             </div>
             <h4 class="font-black text-white text-sm">${p.country_flag || ''} ${p.nick}</h4>
             <p class="text-[11px] text-zinc-400 mt-0.5">${p.team_id?.toUpperCase()} • ${p.role}</p>
