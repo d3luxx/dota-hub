@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
   <title>DOTA HUB — Live Esports Database</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -47,7 +48,7 @@
 
     <div id="loadingIndicator" class="text-center py-12 text-zinc-400">
       <i class="fa-solid fa-circle-notch fa-spin text-3xl text-rose-500 mb-3"></i>
-      <p class="text-xs font-medium">Загрузка спарсенных данных из Supabase...</p>
+      <p class="text-xs font-medium">Загрузка данных...</p>
     </div>
 
     <!-- 1. ТАБЛИЦА РЕЙТИНГА КОМАНД -->
@@ -57,7 +58,7 @@
           <h1 class="text-xl font-black text-white flex items-center gap-2">
             <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
           </h1>
-          <p class="text-xs text-zinc-400">Актуальный рейтинг спарсенных команд из базы данных (кликните по строке)</p>
+          <p class="text-xs text-zinc-400">Кликните по любой команде для перехода к составу</p>
         </div>
       </div>
 
@@ -235,17 +236,17 @@
 
     function getTeamLogoHtml(team) {
       if (team.name?.toLowerCase().includes('parivision') || team.id === 'parivision') {
-        return `<img src="parivision.png" class="w-full h-full object-contain">`;
+        return `<img src="parivision.png" referrerpolicy="no-referrer" class="w-full h-full object-contain">`;
       }
       if (team.logo_url && team.logo_url.startsWith('http')) {
-        return `<img src="${team.logo_url}" class="w-full h-full object-contain" onerror="this.outerHTML='<span class=\\'font-black text-white text-xs\\'>${team.tag || team.name.substring(0,2)}</span>'">`;
+        return `<img src="${team.logo_url}" referrerpolicy="no-referrer" class="w-full h-full object-contain" onerror="this.outerHTML='<span class=\\'font-black text-white text-xs\\'>${team.tag || team.name.substring(0,2)}</span>'">`;
       }
       return `<span class="font-black text-white text-xs">${team.tag || team.name.substring(0,2)}</span>`;
     }
 
     function getPlayerAvatar(p) {
       if (p.photo_url && p.photo_url.length > 0) {
-        return `<img src="${p.photo_url}" class="w-full h-full object-cover object-top" onerror="this.outerHTML=getGeneratedCard('${p.nick}', 'Pos ${p.pos}')">`;
+        return `<img src="${p.photo_url}" referrerpolicy="no-referrer" class="w-full h-full object-cover object-top" onerror="this.outerHTML=getGeneratedCard('${p.nick}', 'Pos ${p.pos}')">`;
       }
       return getGeneratedCard(p.nick, `Pos ${p.pos}`);
     }
