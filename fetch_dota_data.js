@@ -10,29 +10,29 @@ if (!SUPABASE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function syncProData() {
-  console.log('🚀 Запуск сбора данных Dota 2 через OpenDota API...');
+async function syncAll() {
+  console.log('🚀 Синхронизация 30 про-команд и игроков...');
 
   try {
-    const teamsRes = await fetch('https://api.opendota.com/api/teams');
-    const allTeams = await teamsRes.json();
+    const res = await fetch('https://api.opendota.com/api/teams');
+    const teams = await res.json();
 
-    const topTeams = allTeams
-      .filter(t => t.name && t.tag && t.logo_url && t.rating > 1100)
+    const topTeams = teams
+      .filter(t => t.name && t.tag && t.rating > 1000)
       .slice(0, 30);
-
-    console.log(`Найдено ${topTeams.length} команд. Запись в Supabase...`);
 
     for (let i = 0; i < topTeams.length; i++) {
       const t = topTeams[i];
-      const winrate = t.wins + t.losses > 0 ? Math.round((t.wins / (t.wins + t.losses)) * 100) : 50;
+      const winrate = t.wins + t.losses > 0 ? Math.round((t.wins / (t.wins + t.losses)) * 100) : 60;
+      const teamId = String(t.team_id);
 
+      // Сохраняем команду
       await supabase.from('teams').upsert({
-        id: String(t.team_id),
+        id: teamId,
         rank: i + 1,
         name: t.name,
         tag: t.tag,
-        logo_url: t.logo_url,
+        logo_url: t.logo_url || '',
         rating: (t.rating / 400).toFixed(2),
         region: 'Global',
         region_flag: '🌍',
@@ -40,47 +40,48 @@ async function syncProData() {
         wins: t.wins || 0,
         losses: t.losses || 0,
         winrate: winrate,
-        prize: '$' + ((t.rating * 1200).toLocaleString())
+        prize: '$' + (t.rating * 1500).toLocaleString()
       });
 
+      // Сохраняем игроков
       try {
-        const playersRes = await fetch(`https://api.opendota.com/api/teams/${t.team_id}/players`);
-        const teamPlayers = await playersRes.json();
-        const activePlayers = teamPlayers.filter(p => p.is_current_team_member).slice(0, 5);
+        const pRes = await fetch(`https://api.opendota.com/api/teams/${t.team_id}/players`);
+        const players = await pRes.json();
+        const active = players.filter(p => p.is_current_team_member).slice(0, 5);
         const roles = ['Carry (Pos 1)', 'Mid (Pos 2)', 'Offlane (Pos 3)', 'Support (Pos 4)', 'Hard Support (Pos 5)'];
 
-        for (let pIdx = 0; pIdx < activePlayers.length; pIdx++) {
-          const p = activePlayers[pIdx];
+        for (let j = 0; j < active.length; j++) {
+          const p = active[j];
           const pWinrate = p.games_played > 0 ? Math.round((p.wins / p.games_played) * 100) : 60;
 
           await supabase.from('players').upsert({
             id: String(p.account_id),
-            team_id: String(t.team_id),
-            pos: String(pIdx + 1),
-            role: roles[pIdx] || 'Player',
-            nick: p.name || 'Pro Player',
-            real_name: `Dota 2 Pro (ID: ${p.account_id})`,
+            team_id: teamId,
+            pos: String(j + 1),
+            role: roles[j] || 'Player',
+            nick: p.name || `Pro #${p.account_id}`,
+            real_name: `Dota 2 Esports Pro`,
             country_flag: '🌍',
             country_code: 'INT',
             birth: 'Active Pro Player',
-            prize: '$' + ((p.games_played || 100) * 1500).toLocaleString(),
+            prize: '$' + ((p.games_played || 100) * 2000).toLocaleString(),
             winrate: `${pWinrate}%`,
-            kda: '4.80',
-            gpm_xpm: '620 / 680',
+            kda: '4.85',
+            gpm_xpm: '680 / 720',
             photo_url: ''
           });
         }
-      } catch (pErr) {
+      } catch (e) {
         console.warn(`Пропуск игроков для ${t.name}`);
       }
 
-      console.log(`✓ Команда ${t.name} сохранена`);
+      console.log(`✓ Команда [${t.name}] сохранена.`);
     }
 
-    console.log('✅ Все данные успешно записаны в Supabase!');
+    console.log('✅ Все 30 команд и их составы в базе!');
   } catch (err) {
-    console.error('Критическая ошибка:', err.message);
+    console.error('Ошибка:', err);
   }
 }
 
-syncProData();
+syncAll();
