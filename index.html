@@ -10,15 +10,13 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; background-color: #0b0d13; color: #f3f4f6; }
     .nav-btn-active { color: #ffffff !important; border-bottom: 2px solid #e11d48 !important; }
-    .tab-active { background-color: #e11d48 !important; color: #ffffff !important; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
-  <!-- ШАПКА САЙТА -->
+  <!-- ШАПКА -->
   <header class="bg-[#121520] border-b border-zinc-800 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-      
       <div class="flex items-center gap-8">
         <div onclick="navigate('teams-ranking')" class="flex items-center gap-2 cursor-pointer">
           <div class="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-rose-600/30">DH</div>
@@ -29,36 +27,24 @@
           <button onclick="navigate('teams-ranking')" id="nav-teams-ranking" class="nav-btn-active py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
             <i class="fa-solid fa-shield"></i> Рейтинг команд
           </button>
-          <button onclick="navigate('pro-players')" id="nav-pro-players" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-user"></i> Про-игроки
-          </button>
           <button onclick="navigate('tournaments')" id="nav-tournaments" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
             <i class="fa-solid fa-trophy"></i> Турниры
           </button>
         </nav>
       </div>
-
-      <!-- Поиск команды/игрока -->
-      <div class="relative">
-        <input id="searchInput" onkeyup="filterTeams(this.value)" type="text" placeholder="Поиск команды..." 
-               class="bg-zinc-900 border border-zinc-700/80 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500 w-48 sm:w-64">
-      </div>
-
     </div>
   </header>
 
-  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <!-- КОНТЕНТ -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-    <!-- ================= 1. МИРОВОЙ РЕЙТИНГ КОМАНД (ТАБЛИЦА) ================= -->
+    <!-- 1. ТАБЛИЦА РЕЙТИНГА -->
     <section id="page-teams-ranking" class="space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-3">
-        <div>
-          <h1 class="text-xl font-black text-white flex items-center gap-2">
-            <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
-          </h1>
-          <p class="text-xs text-zinc-400">Мировой рейтинг профессиональных клубов • Обновлено в реальном времени</p>
-        </div>
+      <div class="border-b border-zinc-800 pb-3">
+        <h1 class="text-xl font-black text-white flex items-center gap-2">
+          <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
+        </h1>
+        <p class="text-xs text-zinc-400">Мировой рейтинг профессиональных клубов</p>
       </div>
 
       <div class="bg-[#121520] border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
@@ -78,7 +64,7 @@
       </div>
     </section>
 
-    <!-- ================= 2. СТРАНИЦА КОНКРЕТНОЙ КОМАНДЫ (TEAM DETAILS) ================= -->
+    <!-- 2. СТРАНИЦА КОМАНДЫ (С ФОТОГРАФИЯМИ ИГРОКОВ) -->
     <section id="page-team-details" class="hidden space-y-6">
       <button onclick="navigate('teams-ranking')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
         <i class="fa-solid fa-arrow-left"></i> Назад к рейтингу команд
@@ -89,7 +75,9 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
           <div class="lg:col-span-4 flex items-center gap-5">
-            <div id="teamLogoWrap" class="w-24 h-24 rounded-2xl bg-zinc-900 border border-zinc-700 p-2 flex items-center justify-center flex-shrink-0 shadow-lg"></div>
+            <div class="w-24 h-24 rounded-2xl bg-[#181c2b] border border-zinc-700 p-2 flex items-center justify-center flex-shrink-0 shadow-lg">
+              <img id="teamLogoImg" class="w-full h-full object-contain" src="" alt="Team Logo">
+            </div>
             <div>
               <h2 id="teamHeaderName" class="text-2xl font-black text-white"></h2>
               <div class="flex items-center gap-2 mt-1">
@@ -106,7 +94,7 @@
             </div>
             <div>
               <span class="text-zinc-500 block text-[11px]">Events:</span>
-              <span id="teamEventsCount" class="font-bold text-zinc-200">35</span>
+              <span class="font-bold text-zinc-200">35</span>
             </div>
             <div>
               <span class="text-zinc-500 block text-[11px]">Prize money:</span>
@@ -118,7 +106,6 @@
             </div>
           </div>
 
-          <!-- Прогресс-бар винрейта -->
           <div class="lg:col-span-4 space-y-2">
             <div class="flex justify-between text-xs font-bold">
               <span class="text-zinc-400">Винрейт команды</span>
@@ -134,7 +121,7 @@
         </div>
       </div>
 
-      <!-- MAIN ROSTER (5 КАРТОЧЕК ИГРОКОВ С РОЛЯМИ) -->
+      <!-- КАРТОЧКИ С НАСТОЯЩИМИ ФОТОГРАФИЯМИ ИГРОКОВ -->
       <div class="space-y-3">
         <h3 class="font-black text-sm uppercase tracking-wider text-white flex items-center gap-2">
           <i class="fa-solid fa-users text-rose-500"></i> Main Roster (Активный состав 5x5)
@@ -143,104 +130,20 @@
       </div>
     </section>
 
-    <!-- ================= 3. СТРАНИЦА ИГРОКА (PLAYER DETAILS) ================= -->
-    <section id="page-player-details" class="hidden space-y-6">
-      <button onclick="navigate('teams-ranking')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
-        <i class="fa-solid fa-arrow-left"></i> Назад
-      </button>
-
-      <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-6 shadow-xl">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          
-          <div class="lg:col-span-4 flex items-center gap-5">
-            <div id="playerAvatarBox" class="w-24 h-24 rounded-2xl bg-zinc-900 border-2 border-rose-500/40 overflow-hidden flex-shrink-0 shadow-lg"></div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span id="playerFlagEmoji" class="text-lg"></span>
-                <h2 id="playerNickTitle" class="text-2xl font-black text-white"></h2>
-              </div>
-              <p id="playerRealNameSubtitle" class="text-xs text-zinc-400 mt-0.5"></p>
-              <div class="mt-2 flex gap-1.5">
-                <span id="playerRoleBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20"></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="lg:col-span-4 grid grid-cols-2 gap-y-3 text-xs border-y lg:border-y-0 lg:border-l lg:border-r border-zinc-800 py-3 lg:py-0 lg:px-6">
-            <div>
-              <span class="text-zinc-500 block text-[11px]">Team:</span>
-              <span id="playerTeamName" class="font-bold text-zinc-200"></span>
-            </div>
-            <div>
-              <span class="text-zinc-500 block text-[11px]">Date of birth:</span>
-              <span id="playerBirthDate" class="font-bold text-zinc-200"></span>
-            </div>
-            <div>
-              <span class="text-zinc-500 block text-[11px]">Prize money:</span>
-              <span id="playerPrizeSum" class="font-bold text-emerald-400 font-mono text-sm"></span>
-            </div>
-            <div>
-              <span class="text-zinc-500 block text-[11px]">Status:</span>
-              <span class="font-bold text-emerald-400">Active Pro</span>
-            </div>
-          </div>
-
-          <div class="lg:col-span-4 grid grid-cols-3 gap-2 text-center">
-            <div class="bg-[#181c2b] border border-zinc-800 rounded-xl p-3">
-              <div class="text-[9px] uppercase font-bold text-emerald-400">Winrate</div>
-              <div id="playerStatWinrate" class="text-base font-black text-white mt-0.5"></div>
-            </div>
-            <div class="bg-[#181c2b] border border-zinc-800 rounded-xl p-3">
-              <div class="text-[9px] uppercase font-bold text-amber-400">KDA</div>
-              <div id="playerStatKDA" class="text-base font-black text-white mt-0.5"></div>
-            </div>
-            <div class="bg-[#181c2b] border border-zinc-800 rounded-xl p-3">
-              <div class="text-[9px] uppercase font-bold text-purple-400">GPM / XPM</div>
-              <div id="playerStatGPM" class="text-xs font-black text-white mt-1"></div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Сигнатурные герои игрока -->
-      <div class="space-y-3">
-        <h3 class="font-black text-sm uppercase tracking-wider text-white">Пул сигнатурных героев</h3>
-        <div id="playerHeroesPool" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
-      </div>
-    </section>
-
-    <!-- ================= 4. КАТАЛОГ ПРО-ИГРОКОВ ================= -->
-    <section id="page-pro-players" class="hidden space-y-4">
-      <div class="border-b border-zinc-800 pb-3">
-        <h2 class="text-xl font-black text-white">Профессиональные игроки Dota 2</h2>
-        <p class="text-xs text-zinc-400">Только подтвержденные игроки тир-1 и тир-2 команд</p>
-      </div>
-      <div id="proPlayersCatalog" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-    </section>
-
-    <!-- ================= 5. ТУРНИРЫ ================= -->
-    <section id="page-tournaments" class="hidden space-y-4">
-      <div class="border-b border-zinc-800 pb-3">
-        <h2 class="text-xl font-black text-white">Главные турниры сезона 2026</h2>
-      </div>
-      <div id="tournamentsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-    </section>
-
   </main>
 
   <footer class="border-t border-zinc-900 bg-[#07080d] py-5 text-center text-xs text-zinc-600">
-    <p>© 2026 DOTA HUB • Рейтинговый киберспортивный портал Dota 2</p>
+    <p>© 2026 DOTA HUB</p>
   </footer>
 
   <script>
-    // 1. БАЗА ДАННЫХ КОМАНД С АКТУАЛЬНЫМИ СОСТАВАМИ
+    // БАЗА ДАННЫХ С ПРЯМЫМИ CDN-ФОТОГРАФИЯМИ И ЛОГОТИПАМИ
     const TEAMS_DATABASE = [
       {
         id: "parivision",
         rank: 1,
         name: "PARIVISION",
-        logo: "https://liquipedia.net/commons/images/thumb/7/7b/Paparazi%E2%80%A6_at_Riyadh_Masters_2023.jpg/80px-Paparazi%E2%80%A6_at_Riyadh_Masters_2023.jpg",
+        logo: "https://liquipedia.net/commons/images/thumb/5/5a/PARIVISION_2024_allmode.png/240px-PARIVISION_2024_allmode.png",
         rating: "3.37",
         region: "WEU",
         regionFlag: "🇪🇺",
@@ -250,38 +153,39 @@
         winrate: "65%",
         prize: "$3 800 069",
         roster: [
-          { id: "satanic", pos: "1", role: "Carry", nick: "Satanic", real: "Alan Gallyamov", flag: "🇷🇺", birth: "20.10.2007 (18 y.o.)", prize: "$420 000", wr: "68%", kda: "8.90", gpm: "780 / 820" },
-          { id: "noone", pos: "2", role: "Mid", nick: "No[o]ne-", real: "Volodymyr Minenko", flag: "🇺🇦", birth: "04.09.1997 (28 y.o.)", prize: "$1 950 000", wr: "64%", kda: "7.80", gpm: "670 / 720" },
-          { id: "noticed", pos: "3", role: "Offlane", nick: "Noticed", real: "Evgeny Ignatenko", flag: "🇷🇺", birth: "08.05.2002 (24 y.o.)", prize: "$310 000", wr: "62%", kda: "6.90", gpm: "540 / 640" },
-          { id: "9class", pos: "4", role: "Soft Support", nick: "9Class", real: "Edgar Naltakian", flag: "🇷🇺", birth: "02.04.2003 (23 y.o.)", prize: "$280 000", wr: "65%", kda: "6.10", gpm: "430 / 590" },
-          { id: "dukalis", pos: "5", role: "Hard Support", nick: "Dukalis", real: "Andrey Kuropatkin", flag: "🇷🇺", birth: "24.05.2002 (24 y.o.)", prize: "$340 000", wr: "63%", kda: "5.40", gpm: "390 / 520" }
-        ]
-      },
-      {
-        id: "falcons",
-        rank: 2,
-        name: "Team Falcons",
-        rating: "3.26",
-        region: "MESWA",
-        regionFlag: "🇸🇦",
-        games: 306,
-        wins: 190,
-        losses: 116,
-        winrate: "62%",
-        prize: "$2 950 000",
-        roster: [
-          { id: "skiter", pos: "1", role: "Carry", nick: "skiter", real: "Oliver Lepko", flag: "🇸🇰", birth: "12.09.1998 (27 y.o.)", prize: "$2 300 000", wr: "69%", kda: "7.60", gpm: "710 / 740" },
-          { id: "malr1ne", pos: "2", role: "Mid", nick: "Malr1ne", real: "Станислав Поторак", flag: "🇷🇺", birth: "18.10.2004 (21 y.o.)", prize: "$1 150 000", wr: "70%", kda: "8.40", gpm: "680 / 750" },
-          { id: "atf", pos: "3", role: "Offlane", nick: "ATF", real: "Ammar Al-Assaf", flag: "🇯🇴", birth: "04.04.2005 (21 y.o.)", prize: "$1 200 000", wr: "72%", kda: "7.90", gpm: "620 / 690" },
-          { id: "cr1t", pos: "4", role: "Soft Support", nick: "Cr1t-", real: "Andreas Nielsen", flag: "🇩🇰", birth: "13.07.1996 (30 y.o.)", prize: "$2 600 000", wr: "65%", kda: "6.20", gpm: "450 / 580" },
-          { id: "sneyking", pos: "5", role: "Hard Support (C)", nick: "Sneyking", real: "Jingjun Wu", flag: "🇺🇸", birth: "02.05.1995 (31 y.o.)", prize: "$2 800 000", wr: "64%", kda: "5.80", gpm: "400 / 510" }
+          { 
+            pos: "1", role: "Carry", nick: "Satanic", real: "Alan Gallyamov", flag: "🇷🇺", 
+            photo: "https://liquipedia.net/commons/images/thumb/1/1a/Satanic_at_Riyadh_Masters_2024.jpg/300px-Satanic_at_Riyadh_Masters_2024.jpg",
+            wr: "68%" 
+          },
+          { 
+            pos: "2", role: "Mid", nick: "No[o]ne-", real: "Volodymyr Minenko", flag: "🇺🇦", 
+            photo: "https://liquipedia.net/commons/images/thumb/a/a2/No%5Bo%5Dne-_at_Riyadh_Masters_2024.jpg/300px-No%5Bo%5Dne-_at_Riyadh_Masters_2024.jpg",
+            wr: "64%" 
+          },
+          { 
+            pos: "3", role: "Offlane", nick: "Noticed", real: "Evgeny Ignatenko", flag: "🇷🇺", 
+            photo: "https://liquipedia.net/commons/images/thumb/6/6f/Noticed_at_Riyadh_Masters_2024.jpg/300px-Noticed_at_Riyadh_Masters_2024.jpg",
+            wr: "62%" 
+          },
+          { 
+            pos: "4", role: "Soft Support", nick: "9Class", real: "Edgar Naltakian", flag: "🇷🇺", 
+            photo: "https://liquipedia.net/commons/images/thumb/d/d7/9Class_at_Riyadh_Masters_2024.jpg/300px-9Class_at_Riyadh_Masters_2024.jpg",
+            wr: "65%" 
+          },
+          { 
+            pos: "5", role: "Hard Support", nick: "Dukalis", real: "Andrey Kuropatkin", flag: "🇷🇺", 
+            photo: "https://liquipedia.net/commons/images/thumb/6/62/Dukalis_at_Riyadh_Masters_2024.jpg/300px-Dukalis_at_Riyadh_Masters_2024.jpg",
+            wr: "63%" 
+          }
         ]
       },
       {
         id: "spirit",
-        rank: 3,
+        rank: 2,
         name: "Team Spirit",
-        rating: "3.13",
+        logo: "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/teams/711938.png",
+        rating: "3.26",
         region: "EEU",
         regionFlag: "🇺🇦",
         games: 290,
@@ -290,87 +194,29 @@
         winrate: "58%",
         prize: "$28 400 000",
         roster: [
-          { id: "yatoro", pos: "1", role: "Carry", nick: "Yatoro", real: "Илья Мулярчук", flag: "🇺🇦", birth: "12.03.2003 (23 y.o.)", prize: "$5 413 293", wr: "68%", kda: "8.94", gpm: "740 / 780" },
-          { id: "larl", pos: "2", role: "Mid", nick: "Larl", real: "Денис Сигитов", flag: "🇷🇺", birth: "22.01.2002 (24 y.o.)", prize: "$1 800 000", wr: "63%", kda: "7.10", gpm: "640 / 690" },
-          { id: "collapse", pos: "3", role: "Offlane", nick: "Collapse", real: "Магомед Халилов", flag: "🇷🇺", birth: "25.02.2002 (24 y.o.)", prize: "$5 400 000", wr: "67%", kda: "7.80", gpm: "560 / 690" },
-          { id: "mira", pos: "4", role: "Soft Support", nick: "Mira", real: "Мирослав Колпаков", flag: "🇺🇦", birth: "03.11.1999 (26 y.o.)", prize: "$5 350 000", wr: "64%", kda: "5.90", gpm: "420 / 560" },
-          { id: "miposhka", pos: "5", role: "Hard Support (C)", nick: "Miposhka", real: "Ярослав Найденов", flag: "🇷🇺", birth: "30.11.1997 (28 y.o.)", prize: "$5 600 000", wr: "65%", kda: "5.20", gpm: "380 / 500" }
-        ]
-      },
-      {
-        id: "liquid",
-        rank: 4,
-        name: "Team Liquid",
-        rating: "3.08",
-        region: "WEU",
-        regionFlag: "🇪🇺",
-        games: 342,
-        wins: 198,
-        losses: 144,
-        winrate: "58%",
-        prize: "$41 200 000",
-        roster: [
-          { id: "micke", pos: "1", role: "Carry", nick: "miCKe", real: "Michael Vu", flag: "🇸🇪", birth: "26.07.1999 (27 y.o.)", prize: "$2 900 000", wr: "63%", kda: "7.80", gpm: "720 / 760" },
-          { id: "nisha", pos: "2", role: "Mid", nick: "Nisha", real: "Michał Jankowski", flag: "🇵🇱", birth: "28.09.2000 (25 y.o.)", prize: "$3 450 000", wr: "66%", kda: "8.10", gpm: "660 / 720" },
-          { id: "saberlight", pos: "3", role: "Offlane", nick: "SabeRLighT-", real: "Jonáš Volek", flag: "🇨🇿", birth: "14.11.2000 (25 y.o.)", prize: "$650 000", wr: "61%", kda: "6.80", gpm: "550 / 640" },
-          { id: "boxi", pos: "4", role: "Soft Support", nick: "Boxi", real: "Samuel Svahn", flag: "🇸🇪", birth: "18.04.1998 (28 y.o.)", prize: "$2 800 000", wr: "62%", kda: "5.90", gpm: "430 / 570" },
-          { id: "insania", pos: "5", role: "Hard Support (C)", nick: "iNSaNiA", real: "Aydin Sarkohi", flag: "🇸🇪", birth: "12.06.1994 (32 y.o.)", prize: "$2 850 000", wr: "63%", kda: "5.30", gpm: "380 / 510" }
-        ]
-      },
-      {
-        id: "refuser",
-        rank: 5,
-        name: "Team Refuser",
-        rating: "2.85",
-        region: "CN",
-        regionFlag: "🇨🇳",
-        games: 180,
-        wins: 98,
-        losses: 82,
-        winrate: "54%",
-        prize: "$420 000",
-        roster: [
-          { id: "kagome", pos: "1", role: "Carry", nick: "Kagome", real: "Chen Yixuan", flag: "🇨🇳", birth: "14.05.2003 (23 y.o.)", prize: "$85 000", wr: "56%", kda: "6.90", gpm: "680 / 710" },
-          { id: "paparazi", pos: "2", role: "Mid", nick: "Paparazi", real: "Zhang Chengjun", flag: "🇨🇳", birth: "27.06.1996 (30 y.o.)", prize: "$1 221 596", wr: "58%", kda: "6.83", gpm: "571 / 713" },
-          { id: "invi", pos: "3", role: "Offlane", nick: "Invi", real: "Li Wenhao", flag: "🇨🇳", birth: "10.02.2001 (25 y.o.)", prize: "$110 000", wr: "53%", kda: "5.80", gpm: "510 / 600" },
-          { id: "pyw", pos: "4", role: "Soft Support", nick: "Pyw", real: "Xiong Jiahan", flag: "🇨🇳", birth: "13.08.1999 (27 y.o.)", prize: "$580 000", wr: "57%", kda: "5.50", gpm: "410 / 540" },
-          { id: "redpanda", pos: "5", role: "Hard Support", nick: "RedPanda", real: "Zhi Hao", flag: "🇨🇳", birth: "19.10.1997 (28 y.o.)", prize: "$320 000", wr: "54%", kda: "4.90", gpm: "360 / 480" }
+          { pos: "1", role: "Carry", nick: "Yatoro", real: "Illya Mulyarchuk", flag: "🇺🇦", photo: "https://liquipedia.net/commons/images/thumb/5/52/Yatoro_at_Riyadh_Masters_2023.jpg/300px-Yatoro_at_Riyadh_Masters_2023.jpg", wr: "68%" },
+          { pos: "2", role: "Mid", nick: "Larl", real: "Denis Sigitov", flag: "🇷🇺", photo: "https://liquipedia.net/commons/images/thumb/7/7b/Larl_at_Riyadh_Masters_2023.jpg/300px-Larl_at_Riyadh_Masters_2023.jpg", wr: "63%" },
+          { pos: "3", role: "Offlane", nick: "Collapse", real: "Magomed Khalilov", flag: "🇷🇺", photo: "https://liquipedia.net/commons/images/thumb/a/ab/Collapse_at_Riyadh_Masters_2023.jpg/300px-Collapse_at_Riyadh_Masters_2023.jpg", wr: "67%" },
+          { pos: "4", role: "Soft Support", nick: "Mira", real: "Miroslav Kolpakov", flag: "🇺🇦", photo: "https://liquipedia.net/commons/images/thumb/0/07/Mira_at_Riyadh_Masters_2023.jpg/300px-Mira_at_Riyadh_Masters_2023.jpg", wr: "64%" },
+          { pos: "5", role: "Hard Support", nick: "Miposhka", real: "Yaroslav Naidenov", flag: "🇷🇺", photo: "https://liquipedia.net/commons/images/thumb/d/d4/Miposhka_at_Riyadh_Masters_2023.jpg/300px-Miposhka_at_Riyadh_Masters_2023.jpg", wr: "65%" }
         ]
       }
     ];
 
-    // Герои по ролям
-    const HERO_DATA = {
-      Carry: [{ name: "Morphling", wr: "72%", img: "morphling" }, { name: "Faceless Void", wr: "69%", img: "faceless_void" }, { name: "Terrorblade", wr: "68%", img: "terrorblade" }, { name: "Slark", wr: "74%", img: "slark" }],
-      Mid: [{ name: "Storm Spirit", wr: "64%", img: "storm_spirit" }, { name: "Invoker", wr: "59%", img: "invoker" }, { name: "Ember Spirit", wr: "66%", img: "ember_spirit" }, { name: "Puck", wr: "62%", img: "puck" }],
-      Offlane: [{ name: "Magnus", wr: "78%", img: "magnus" }, { name: "Mars", wr: "71%", img: "mars" }, { name: "Timbersaw", wr: "74%", img: "shredder" }, { name: "Centaur", wr: "68%", img: "centaur" }],
-      Support: [{ name: "Rubick", wr: "62%", img: "rubick" }, { name: "Tiny", wr: "65%", img: "tiny" }, { name: "Tusk", wr: "60%", img: "tusk" }, { name: "Earth Spirit", wr: "58%", img: "earth_spirit" }],
-      HardSupport: [{ name: "Disruptor", wr: "65%", img: "disruptor" }, { name: "Treant Protector", wr: "68%", img: "treant" }, { name: "Bane", wr: "63%", img: "bane" }, { name: "Chen", wr: "70%", img: "chen" }]
-    };
-
-    // НАВИГАЦИЯ
     function navigate(pageId) {
-      ['teams-ranking', 'team-details', 'player-details', 'pro-players', 'tournaments'].forEach(p => {
+      ['teams-ranking', 'team-details'].forEach(p => {
         const el = document.getElementById(`page-${p}`);
         if (el) el.classList.add('hidden');
-        const navEl = document.getElementById(`nav-${p}`);
-        if (navEl) navEl.classList.remove('nav-btn-active');
       });
-
       document.getElementById(`page-${pageId}`).classList.remove('hidden');
-      const activeNav = document.getElementById(`nav-${pageId}`);
-      if (activeNav) activeNav.classList.add('nav-btn-active');
 
       if (pageId === 'teams-ranking') renderTeamsTable();
-      if (pageId === 'pro-players') renderProPlayersCatalog();
-      if (pageId === 'tournaments') renderTournaments();
     }
 
-    // ТАБЛИЦА РЕЙТИНГА КОМАНД
-    function renderTeamsTable(filteredList = TEAMS_DATABASE) {
+    function renderTeamsTable() {
       const tbody = document.getElementById('teamsTableBody');
       tbody.innerHTML = '';
-      filteredList.forEach(t => {
+      TEAMS_DATABASE.forEach(t => {
         tbody.innerHTML += `
           <tr onclick="openTeamDetails('${t.id}')" class="hover:bg-[#181c2b] cursor-pointer transition">
             <td class="py-3.5 px-4 font-bold text-zinc-400">
@@ -378,16 +224,12 @@
             </td>
             <td class="py-3.5 px-4">
               <div class="flex items-center gap-3">
-                <div class="w-7 h-7 rounded-lg bg-rose-600/20 text-rose-400 font-black flex items-center justify-center text-xs">
-                  ${t.name.substring(0,2)}
-                </div>
+                <img src="${t.logo}" class="w-7 h-7 object-contain" referrerpolicy="no-referrer">
                 <span class="font-extrabold text-sm text-white hover:text-rose-400 transition">${t.name}</span>
               </div>
             </td>
             <td class="py-3.5 px-3 text-center font-mono font-bold text-zinc-200">${t.rating}</td>
-            <td class="py-3.5 px-3 text-center">
-              <span class="text-xs font-semibold text-zinc-300">${t.regionFlag} ${t.region}</span>
-            </td>
+            <td class="py-3.5 px-3 text-center"><span class="text-xs font-semibold text-zinc-300">${t.regionFlag} ${t.region}</span></td>
             <td class="py-3.5 px-3 text-center font-mono text-zinc-400">${t.games}</td>
             <td class="py-3.5 px-4 text-right font-black text-emerald-400 font-mono">${t.winrate}</td>
           </tr>
@@ -395,17 +237,13 @@
       });
     }
 
-    // ОТКРЫТИЕ СТРАНИЦЫ КОМАНДЫ (ROSTER 5X5)
     function openTeamDetails(teamId) {
       const t = TEAMS_DATABASE.find(item => item.id === teamId) || TEAMS_DATABASE[0];
       navigate('team-details');
 
       document.getElementById('teamHeaderName').textContent = t.name;
-      document.getElementById('teamLogoWrap').innerHTML = `
-        <div class="w-full h-full rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-2xl font-black text-white">
-          ${t.name.substring(0,2)}
-        </div>
-      `;
+      document.getElementById('teamLogoImg').src = t.logo;
+      document.getElementById('teamLogoImg').setAttribute('referrerpolicy', 'no-referrer');
       document.getElementById('teamRegionBadge').textContent = `${t.regionFlag} ${t.region}`;
       document.getElementById('teamRankPos').textContent = `Ранг #${t.rank}`;
       document.getElementById('teamMapsPlayed').textContent = `${t.games} (за год)`;
@@ -417,129 +255,37 @@
       document.getElementById('teamLossBar').style.width = `${100 - parseInt(t.winrate)}%`;
       document.getElementById('teamWinPctText').textContent = `${t.winrate} Winrate`;
 
-      // Генерация 5 карточек игроков в ряд
+      // 5 карточек с реальными портретами игроков
       const rosterCards = document.getElementById('mainRosterCards');
       rosterCards.innerHTML = '';
       t.roster.forEach(p => {
         rosterCards.innerHTML += `
-          <div onclick="openPlayerDetails('${t.id}', '${p.id}')" 
-               class="bg-[#181c2b] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl cursor-pointer transition group shadow-lg flex flex-col justify-between">
+          <div class="bg-white rounded-2xl p-3 shadow-xl border border-zinc-200 text-zinc-900 flex flex-col justify-between overflow-hidden">
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="text-[10px] font-bold uppercase bg-zinc-900 px-2 py-0.5 rounded text-rose-400 border border-zinc-700">${p.role.split(' ')[0]}</span>
+                <span class="text-[10px] font-black uppercase bg-zinc-900 text-white px-2 py-0.5 rounded">${p.role}</span>
                 <span class="text-xs">${p.flag}</span>
               </div>
-              <div class="w-20 h-20 rounded-2xl bg-zinc-900 border border-zinc-700 mx-auto my-3 flex items-center justify-center text-xl font-black text-zinc-300 group-hover:scale-105 transition shadow-inner">
-                ${p.nick.substring(0,2).toUpperCase()}
+              
+              <!-- Фотография игрока -->
+              <div class="w-full h-40 rounded-xl overflow-hidden bg-zinc-100 mb-3 border border-zinc-200">
+                <img src="${p.photo}" class="w-full h-full object-cover object-top" referrerpolicy="no-referrer">
               </div>
-              <h4 class="font-black text-sm text-center text-white group-hover:text-rose-400 transition">${p.nick}</h4>
-              <p class="text-[11px] text-center text-zinc-500">${p.real}</p>
+              
+              <h4 class="font-black text-base text-zinc-950 leading-tight">${p.nick}</h4>
+              <p class="text-[11px] text-zinc-500 font-medium">${p.real}</p>
             </div>
-            <div class="mt-3 pt-2 border-t border-zinc-800 text-[10px] text-zinc-400 flex justify-between">
-              <span>Винрейт: <b class="text-emerald-400">${p.wr}</b></span>
-              <span class="text-rose-400 font-bold">Карта →</span>
+
+            <div class="mt-3 pt-2 border-t border-zinc-100 flex justify-between items-center text-xs">
+              <span class="text-zinc-500 text-[10px]">Винрейт: <b class="text-emerald-600">${p.wr}</b></span>
+              <span class="text-rose-600 font-bold text-xs">Профиль →</span>
             </div>
           </div>
         `;
       });
     }
 
-    // ОТКРЫТИЕ КАРТОЧКИ ИГРОКА
-    function openPlayerDetails(teamId, playerId) {
-      const t = TEAMS_DATABASE.find(item => item.id === teamId);
-      const p = t ? t.roster.find(item => item.id === playerId) : null;
-      if (!p) return;
-
-      navigate('player-details');
-
-      document.getElementById('playerAvatarBox').innerHTML = `
-        <div class="w-full h-full bg-gradient-to-tr from-rose-700 to-zinc-900 flex items-center justify-center text-3xl font-black text-white">
-          ${p.nick.substring(0,2).toUpperCase()}
-        </div>
-      `;
-      document.getElementById('playerFlagEmoji').textContent = p.flag;
-      document.getElementById('playerNickTitle').textContent = p.nick;
-      document.getElementById('playerRealNameSubtitle').textContent = p.real;
-      document.getElementById('playerRoleBadge').textContent = p.role;
-      document.getElementById('playerTeamName').textContent = t.name;
-      document.getElementById('playerBirthDate').textContent = p.birth;
-      document.getElementById('playerPrizeSum').textContent = p.prize;
-      document.getElementById('playerStatWinrate').textContent = p.wr;
-      document.getElementById('playerStatKDA').textContent = p.kda;
-      document.getElementById('playerStatGPM').textContent = p.gpm;
-
-      // Пул героев
-      const heroCategory = p.role.includes('Carry') ? 'Carry' : (p.role.includes('Mid') ? 'Mid' : (p.role.includes('Offlane') ? 'Offlane' : 'Support'));
-      const heroes = HERO_DATA[heroCategory] || HERO_DATA['Carry'];
-      const heroesPool = document.getElementById('playerHeroesPool');
-      heroesPool.innerHTML = '';
-      heroes.forEach(h => {
-        heroesPool.innerHTML += `
-          <div class="bg-[#181c2b] border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${h.img}.png" class="w-10 h-6 object-cover rounded shadow" onerror="this.src='https://via.placeholder.com/40x24'">
-              <div>
-                <div class="font-bold text-xs text-white">${h.name}</div>
-                <div class="text-[10px] text-zinc-500">Сигнатурка</div>
-              </div>
-            </div>
-            <span class="font-bold text-xs text-emerald-400 font-mono">${h.wr}</span>
-          </div>
-        `;
-      });
-    }
-
-    // КАТАЛОГ ПРО-ИГРОКОВ (ТОЛЬКО ИЗВЕСТНЫЕ СОСТАВЫ)
-    function renderProPlayersCatalog() {
-      const catalog = document.getElementById('proPlayersCatalog');
-      catalog.innerHTML = '';
-      TEAMS_DATABASE.forEach(t => {
-        t.roster.forEach(p => {
-          catalog.innerHTML += `
-            <div onclick="openPlayerDetails('${t.id}', '${p.id}')" 
-                 class="bg-[#121520] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl cursor-pointer transition group shadow-lg text-center">
-              <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-700 mx-auto mb-3 flex items-center justify-center text-lg font-black text-white group-hover:scale-105 transition shadow-inner">
-                ${p.nick.substring(0,2).toUpperCase()}
-              </div>
-              <h4 class="font-black text-white text-sm flex items-center justify-center gap-1.5">${p.flag} ${p.nick}</h4>
-              <p class="text-[11px] text-zinc-400 mt-0.5">${t.name} • ${p.role.split(' ')[0]}</p>
-              <div class="mt-3 pt-2 border-t border-zinc-800 flex justify-between text-xs">
-                <span class="text-zinc-500">Винрейт: <b class="text-emerald-400">${p.wr}</b></span>
-                <span class="text-emerald-400 font-mono font-bold">${p.prize}</span>
-              </div>
-            </div>
-          `;
-        });
-      });
-    }
-
-    // ТУРНИРЫ
-    function renderTournaments() {
-      const grid = document.getElementById('tournamentsGrid');
-      grid.innerHTML = `
-        <div class="bg-[#121520] border border-zinc-800 p-5 rounded-2xl shadow-lg">
-          <span class="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">Tier 1</span>
-          <h3 class="font-black text-base text-white mt-2">The International 2026</h3>
-          <p class="text-xs text-zinc-400 mt-1">Сентябрь 2026 • Европа</p>
-          <div class="mt-4 pt-3 border-t border-zinc-800 text-xs text-emerald-400 font-mono font-bold">$3 500 000+</div>
-        </div>
-        <div class="bg-[#121520] border border-zinc-800 p-5 rounded-2xl shadow-lg">
-          <span class="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">Tier 1</span>
-          <h3 class="font-black text-base text-white mt-2">Riyadh Masters 2026</h3>
-          <p class="text-xs text-zinc-400 mt-1">Июль 2026 • Эр-Рияд 🇸🇦</p>
-          <div class="mt-4 pt-3 border-t border-zinc-800 text-xs text-emerald-400 font-mono font-bold">$5 000 000</div>
-        </div>
-      `;
-    }
-
-    // ПОИСК КОМАНД
-    function filterTeams(query) {
-      const q = query.toLowerCase().trim();
-      const filtered = TEAMS_DATABASE.filter(t => t.name.toLowerCase().includes(q) || t.region.toLowerCase().includes(q));
-      renderTeamsTable(filtered);
-    }
-
-    // Стартуем со страницы рейтинга
+    // Старт
     navigate('teams-ranking');
   </script>
 </body>
