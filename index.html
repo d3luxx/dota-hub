@@ -47,18 +47,16 @@
 
     <div id="loadingIndicator" class="text-center py-12 text-zinc-400">
       <i class="fa-solid fa-circle-notch fa-spin text-3xl text-rose-500 mb-3"></i>
-      <p class="text-xs font-medium">Загрузка данных из Supabase...</p>
+      <p class="text-xs font-medium">Загрузка данных...</p>
     </div>
 
     <!-- 1. ТАБЛИЦА РЕЙТИНГА КОМАНД -->
     <section id="page-teams-ranking" class="hidden space-y-4">
-      <div class="border-b border-zinc-800 pb-3 flex items-center justify-between">
-        <div>
-          <h1 class="text-xl font-black text-white flex items-center gap-2">
-            <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
-          </h1>
-          <p class="text-xs text-zinc-400">Спарсенные команды из базы данных (кликните по строке)</p>
-        </div>
+      <div class="border-b border-zinc-800 pb-3">
+        <h1 class="text-xl font-black text-white flex items-center gap-2">
+          <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
+        </h1>
+        <p class="text-xs text-zinc-400">Кликните на любую команду для просмотра ростера и игроков</p>
       </div>
 
       <div class="bg-[#121520] border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
@@ -129,7 +127,7 @@
       </div>
     </section>
 
-    <!-- 3. ДЕТАЛЬНЫЙ ПРОФИЛЬ ИГРОКА (КАК НА CYBERSCORE) -->
+    <!-- 3. ДЕТАЛЬНЫЙ ПРОФИЛЬ ИГРОКА -->
     <section id="page-player-profile" class="hidden space-y-6">
       <button onclick="navigate('team-details')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
         <i class="fa-solid fa-arrow-left"></i> Назад к составу команды
@@ -162,41 +160,36 @@
               <span id="playerStatKda" class="text-lg font-black text-sky-400 font-mono">4.85</span>
             </div>
             <div class="bg-[#181c2b] p-3 rounded-xl border border-zinc-800/80">
-              <span class="text-[10px] text-zinc-500 font-bold uppercase block">Prize Money</span>
-              <span id="playerStatPrize" class="text-lg font-black text-amber-400 font-mono">$1.2M</span>
+              <span class="text-[10px] text-zinc-500 font-bold uppercase block">GPM / XPM</span>
+              <span id="playerStatGpm" class="text-lg font-black text-amber-400 font-mono">720 / 780</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Блок статистики: Сигнатурные Герои + Последние Матчи -->
+      <!-- Сигнатурные Герои + Матчи -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl space-y-4">
           <h3 class="font-black text-sm uppercase tracking-wider text-white flex items-center gap-2">
-            <i class="fa-solid fa-bolt text-amber-400"></i> HEROES / СИГНАТУРНЫЕ ГЕРОИ
+            <i class="fa-solid fa-bolt text-amber-400"></i> SIGNATURE HEROES / СИГНАТУРНЫЕ ГЕРОИ
           </h3>
           <div class="overflow-hidden rounded-xl border border-zinc-800/60">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-[#181c2b] text-zinc-400 uppercase text-[10px] font-bold border-b border-zinc-800">
                   <th class="py-2.5 px-3">Герой</th>
-                  <th class="py-2.5 px-3 text-center">Игр</th>
+                  <th class="py-2.5 px-3 text-center">Матчей</th>
                   <th class="py-2.5 px-3 text-right">Винрейт</th>
                 </tr>
               </thead>
-              <tbody id="playerHeroesTable" class="divide-y divide-zinc-800/40">
-                <tr class="hover:bg-[#181c2b] transition"><td class="py-2 px-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Pangolier</td><td class="py-2 px-3 text-center font-mono text-zinc-300">48</td><td class="py-2 px-3 text-right font-mono font-bold text-emerald-400">76%</td></tr>
-                <tr class="hover:bg-[#181c2b] transition"><td class="py-2 px-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Ember Spirit</td><td class="py-2 px-3 text-center font-mono text-zinc-300">42</td><td class="py-2 px-3 text-right font-mono font-bold text-emerald-400">71%</td></tr>
-                <tr class="hover:bg-[#181c2b] transition"><td class="py-2 px-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-500"></span> Invoker</td><td class="py-2 px-3 text-center font-mono text-zinc-300">39</td><td class="py-2 px-3 text-right font-mono font-bold text-emerald-400">68%</td></tr>
-                <tr class="hover:bg-[#181c2b] transition"><td class="py-2 px-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-teal-500"></span> Puck</td><td class="py-2 px-3 text-center font-mono text-zinc-300">31</td><td class="py-2 px-3 text-right font-mono font-bold text-emerald-400">62%</td></tr>
-              </tbody>
+              <tbody id="playerHeroesTable" class="divide-y divide-zinc-800/40"></tbody>
             </table>
           </div>
         </div>
 
         <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl space-y-4">
           <h3 class="font-black text-sm uppercase tracking-wider text-white flex items-center gap-2">
-            <i class="fa-solid fa-gamepad text-rose-500"></i> PAST GAMES / ПОСЛЕДНИЕ МАТЧИ
+            <i class="fa-solid fa-gamepad text-rose-500"></i> RECENT MATCHES / ПОСЛЕДНИЕ МАТЧИ
           </h3>
           <div class="overflow-hidden rounded-xl border border-zinc-800/60">
             <table class="w-full text-left border-collapse text-xs">
@@ -207,11 +200,7 @@
                   <th class="py-2.5 px-3 text-right">Длительность</th>
                 </tr>
               </thead>
-              <tbody id="playerMatchesTable" class="divide-y divide-zinc-800/40">
-                <tr class="hover:bg-[#181c2b] transition"><td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-400">WIN</span></td><td class="py-2 px-3 text-center font-mono font-bold text-zinc-200">12 / 2 / 18</td><td class="py-2 px-3 text-right font-mono text-zinc-400">38:12</td></tr>
-                <tr class="hover:bg-[#181c2b] transition"><td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-400">WIN</span></td><td class="py-2 px-3 text-center font-mono font-bold text-zinc-200">8 / 1 / 14</td><td class="py-2 px-3 text-right font-mono text-zinc-400">41:05</td></tr>
-                <tr class="hover:bg-[#181c2b] transition"><td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-500/20 text-rose-400">LOSS</span></td><td class="py-2 px-3 text-center font-mono font-bold text-zinc-200">4 / 6 / 9</td><td class="py-2 px-3 text-right font-mono text-zinc-400">29:40</td></tr>
-              </tbody>
+              <tbody id="playerMatchesTable" class="divide-y divide-zinc-800/40"></tbody>
             </table>
           </div>
         </div>
@@ -229,7 +218,7 @@
   </main>
 
   <footer class="border-t border-zinc-900 bg-[#07080d] py-5 text-center text-xs text-zinc-600">
-    <p>© 2026 DOTA HUB • Интеграция с OpenDota API & Supabase</p>
+    <p>© 2026 DOTA HUB • База данных Supabase</p>
   </footer>
 
   <script>
@@ -251,24 +240,24 @@
     };
 
     function getTeamLogoHtml(team) {
-      if (team.id === 'parivision' || team.name?.toLowerCase().includes('parivision')) {
+      if (team.name?.toLowerCase().includes('parivision') || team.id === 'parivision') {
         return `<img src="parivision.png" class="w-full h-full object-contain">`;
       }
       if (team.logo_url && team.logo_url.startsWith('http')) {
-        return `<img src="${team.logo_url}" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-full h-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-white\\'>${team.name.substring(0,2)}</div>';">`;
+        return `<img src="${team.logo_url}" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full bg-gradient-to-tr from-rose-600 to-amber-500 rounded-lg flex items-center justify-center font-black text-white text-xs\\'>${team.name.substring(0,2).toUpperCase()}</div>';">`;
       }
-      return `<div class="w-full h-full rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center font-black text-white text-base">${team.name.substring(0,2)}</div>`;
+      return `<div class="w-full h-full bg-gradient-to-tr from-rose-600 to-amber-500 rounded-lg flex items-center justify-center font-black text-white text-xs">${team.name.substring(0,2).toUpperCase()}</div>`;
     }
 
     function getPlayerAvatarSvg(initials) {
-      return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2327272a"/><stop offset="100%" stop-color="%2309090b"/></linearGradient></defs><rect width="300" height="300" fill="url(%23g)"/><circle cx="150" cy="115" r="50" fill="%23ffffff" opacity="0.85"/><path d="M70 260 C70 190 230 190 230 260 Z" fill="%23ffffff" opacity="0.85"/><text x="150" y="285" font-family="Arial, sans-serif" font-weight="900" font-size="24" fill="%23ffffff" text-anchor="middle">${encodeURIComponent(initials)}</text></svg>`;
+      return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2327272a"/><stop offset="100%" stop-color="%2309090b"/></linearGradient></defs><rect width="300" height="300" fill="url(%23g)"/><circle cx="150" cy="115" r="50" fill="%23e11d48" opacity="0.85"/><path d="M70 260 C70 190 230 190 230 260 Z" fill="%23e11d48" opacity="0.85"/><text x="150" y="285" font-family="Arial, sans-serif" font-weight="900" font-size="24" fill="%23ffffff" text-anchor="middle">${encodeURIComponent(initials)}</text></svg>`;
     }
 
     async function loadDataFromSupabase() {
       try {
         const [teamsRes, playersRes] = await Promise.all([
           db.from('teams').select('*').order('rank', { ascending: true }),
-          db.from('players').select('*')
+          db.from('players').select('*').order('pos', { ascending: true })
         ]);
 
         if (teamsRes.error) throw teamsRes.error;
@@ -283,8 +272,6 @@
         navigate('teams-ranking');
       } catch (err) {
         console.error(err);
-        const loader = document.getElementById('loadingIndicator');
-        if (loader) loader.innerHTML = `<div class="text-rose-500 font-bold">Ошибка загрузки: ${err.message}</div>`;
       }
     }
 
@@ -317,7 +304,7 @@
             </td>
             <td class="py-3.5 px-4">
               <div class="flex items-center gap-3">
-                <div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-zinc-900 border border-zinc-800">
+                <div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-zinc-900 border border-zinc-800 p-0.5">
                   ${getTeamLogoHtml(t)}
                 </div>
                 <span class="font-extrabold text-sm text-white hover:text-rose-400 transition">${t.name}</span>
@@ -359,7 +346,7 @@
       }
 
       teamPlayers.forEach(p => {
-        const photoSrc = LOCAL_PHOTOS[p.id] || getPlayerAvatarSvg(p.nick.substring(0,2));
+        const photoSrc = LOCAL_PHOTOS[p.id] || (p.photo_url && p.photo_url.startsWith('http') ? p.photo_url : getPlayerAvatarSvg(p.nick.substring(0,2)));
         rosterCards.innerHTML += `
           <div class="bg-white rounded-2xl p-3.5 shadow-2xl border border-zinc-200 text-zinc-900 flex flex-col justify-between overflow-hidden">
             <div>
@@ -368,8 +355,8 @@
                 <span class="text-xs font-bold">${p.country_flag || '🌍'}</span>
               </div>
               
-              <div class="relative w-full h-44 rounded-xl overflow-hidden bg-zinc-100 mb-3 border border-zinc-200 shadow-inner">
-                <img src="${photoSrc}" class="w-full h-full object-cover object-top" alt="${p.nick}">
+              <div class="relative w-full h-44 rounded-xl overflow-hidden bg-zinc-100 mb-3 border border-zinc-200 shadow-inner flex items-center justify-center">
+                <img src="${photoSrc}" class="w-full h-full object-cover object-top" onerror="this.src='${getPlayerAvatarSvg(p.nick.substring(0,2))}';">
                 <div class="absolute bottom-1.5 right-1.5 bg-amber-500 text-black font-black text-[9px] px-1.5 py-0.5 rounded shadow">
                   Pos ${p.pos}
                 </div>
@@ -392,28 +379,42 @@
       const p = PLAYERS_CACHE.find(item => item.id === playerId) || PLAYERS_CACHE[0];
       navigate('player-profile');
 
-      const photoSrc = LOCAL_PHOTOS[p.id] || getPlayerAvatarSvg(p.nick.substring(0,2));
-      document.getElementById('playerAvatarBox').innerHTML = `<img src="${photoSrc}" class="w-full h-full object-cover object-top">`;
+      const photoSrc = LOCAL_PHOTOS[p.id] || (p.photo_url && p.photo_url.startsWith('http') ? p.photo_url : getPlayerAvatarSvg(p.nick.substring(0,2)));
+      document.getElementById('playerAvatarBox').innerHTML = `<img src="${photoSrc}" class="w-full h-full object-cover object-top" onerror="this.src='${getPlayerAvatarSvg(p.nick.substring(0,2))}';">`;
       document.getElementById('playerNickTitle').textContent = p.nick;
-      document.getElementById('playerRealNameSubtitle').textContent = p.real_name || 'Профессиональный игрок Dota 2';
+      document.getElementById('playerRealNameSubtitle').textContent = `${p.real_name || 'Pro Player'} • ${p.birth || ''}`;
       document.getElementById('playerFlagBadge').textContent = p.country_flag || '🌍';
       document.getElementById('playerRoleBadge').textContent = p.role;
-      document.getElementById('playerTeamBadge').textContent = CURRENT_SELECTED_TEAM?.name || 'PARIVISION';
+      document.getElementById('playerTeamBadge').textContent = CURRENT_SELECTED_TEAM?.name || 'Pro Team';
 
       document.getElementById('playerStatWinrate').textContent = p.winrate || '65%';
       document.getElementById('playerStatKda').textContent = p.kda || '4.85';
-      document.getElementById('playerStatPrize').textContent = p.prize || '$1 200 000';
+      document.getElementById('playerStatGpm').textContent = p.gpm_xpm || '720 / 780';
+
+      const heroesTbody = document.getElementById('playerHeroesTable');
+      heroesTbody.innerHTML = `
+        <tr class="hover:bg-[#181c2b] transition"><td class="py-2.5 px-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Pangolier</td><td class="py-2.5 px-3 text-center font-mono text-zinc-300">114</td><td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">71%</td></tr>
+        <tr class="hover:bg-[#181c2b] transition"><td class="py-2.5 px-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Ember Spirit</td><td class="py-2.5 px-3 text-center font-mono text-zinc-300">92</td><td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">68%</td></tr>
+        <tr class="hover:bg-[#181c2b] transition"><td class="py-2.5 px-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-500"></span> Invoker</td><td class="py-2.5 px-3 text-center font-mono text-zinc-300">84</td><td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">65%</td></tr>
+      `;
+
+      const matchesTbody = document.getElementById('playerMatchesTable');
+      matchesTbody.innerHTML = `
+        <tr class="hover:bg-[#181c2b] transition"><td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-400">WIN</span></td><td class="py-2.5 px-3 text-center font-mono font-bold text-zinc-200">14 / 1 / 16</td><td class="py-2.5 px-3 text-right font-mono text-zinc-400">36:40</td></tr>
+        <tr class="hover:bg-[#181c2b] transition"><td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-400">WIN</span></td><td class="py-2.5 px-3 text-center font-mono font-bold text-zinc-200">9 / 2 / 12</td><td class="py-2.5 px-3 text-right font-mono text-zinc-400">42:15</td></tr>
+        <tr class="hover:bg-[#181c2b] transition"><td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-500/20 text-rose-400">LOSS</span></td><td class="py-2.5 px-3 text-center font-mono font-bold text-zinc-200">3 / 5 / 8</td><td class="py-2.5 px-3 text-right font-mono text-zinc-400">28:10</td></tr>
+      `;
     }
 
     function renderProPlayersCatalog() {
       const catalog = document.getElementById('proPlayersCatalog');
       catalog.innerHTML = '';
       PLAYERS_CACHE.forEach(p => {
-        const photoSrc = LOCAL_PHOTOS[p.id] || getPlayerAvatarSvg(p.nick.substring(0,2));
+        const photoSrc = LOCAL_PHOTOS[p.id] || (p.photo_url && p.photo_url.startsWith('http') ? p.photo_url : getPlayerAvatarSvg(p.nick.substring(0,2)));
         catalog.innerHTML += `
           <div onclick="openPlayerDetails('${p.id}')" class="bg-[#121520] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl transition group shadow-lg text-center cursor-pointer">
-            <div class="w-20 h-20 rounded-2xl overflow-hidden mx-auto mb-3 border border-zinc-700 bg-zinc-900 shadow-inner">
-              <img src="${photoSrc}" class="w-full h-full object-cover object-top">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden mx-auto mb-3 border border-zinc-700 bg-zinc-900 shadow-inner flex items-center justify-center">
+              <img src="${photoSrc}" class="w-full h-full object-cover object-top" onerror="this.src='${getPlayerAvatarSvg(p.nick.substring(0,2))}';">
             </div>
             <h4 class="font-black text-white text-sm">${p.country_flag || ''} ${p.nick}</h4>
             <p class="text-[11px] text-zinc-400 mt-0.5">${p.team_id?.toUpperCase()} • ${p.role}</p>
