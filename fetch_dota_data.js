@@ -1,87 +1,82 @@
 import { createClient } from '@supabase/supabase-js';
+import * as cheerio from 'cheerio';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://waybpnkztszkldlwxuge.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_KEY) {
-  console.error('Ошибка: SUPABASE_SERVICE_ROLE_KEY не найден');
+  console.error('SUPABASE_SERVICE_ROLE_KEY не найден');
   process.exit(1);
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function syncAll() {
-  console.log('🚀 Синхронизация 30 про-команд и игроков...');
+async function parseCyberScore() {
+  console.log('🚀 Запуск парсинга команд и игроков с CyberScore...');
 
   try {
-    const res = await fetch('https://api.opendota.com/api/teams');
-    const teams = await res.json();
-
-    const topTeams = teams
-      .filter(t => t.name && t.tag && t.rating > 1000)
-      .slice(0, 30);
-
-    for (let i = 0; i < topTeams.length; i++) {
-      const t = topTeams[i];
-      const winrate = t.wins + t.losses > 0 ? Math.round((t.wins / (t.wins + t.losses)) * 100) : 60;
-      const teamId = String(t.team_id);
-
-      // Сохраняем команду
-      await supabase.from('teams').upsert({
-        id: teamId,
-        rank: i + 1,
-        name: t.name,
-        tag: t.tag,
-        logo_url: t.logo_url || '',
-        rating: (t.rating / 400).toFixed(2),
-        region: 'Global',
-        region_flag: '🌍',
-        games: (t.wins || 0) + (t.losses || 0),
-        wins: t.wins || 0,
-        losses: t.losses || 0,
-        winrate: winrate,
-        prize: '$' + (t.rating * 1500).toLocaleString()
-      });
-
-      // Сохраняем игроков
-      try {
-        const pRes = await fetch(`https://api.opendota.com/api/teams/${t.team_id}/players`);
-        const players = await pRes.json();
-        const active = players.filter(p => p.is_current_team_member).slice(0, 5);
-        const roles = ['Carry (Pos 1)', 'Mid (Pos 2)', 'Offlane (Pos 3)', 'Support (Pos 4)', 'Hard Support (Pos 5)'];
-
-        for (let j = 0; j < active.length; j++) {
-          const p = active[j];
-          const pWinrate = p.games_played > 0 ? Math.round((p.wins / p.games_played) * 100) : 60;
-
-          await supabase.from('players').upsert({
-            id: String(p.account_id),
-            team_id: teamId,
-            pos: String(j + 1),
-            role: roles[j] || 'Player',
-            nick: p.name || `Pro #${p.account_id}`,
-            real_name: `Dota 2 Esports Pro`,
-            country_flag: '🌍',
-            country_code: 'INT',
-            birth: 'Active Pro Player',
-            prize: '$' + ((p.games_played || 100) * 2000).toLocaleString(),
-            winrate: `${pWinrate}%`,
-            kda: '4.85',
-            gpm_xpm: '680 / 720',
-            photo_url: ''
-          });
-        }
-      } catch (e) {
-        console.warn(`Пропуск игроков для ${t.name}`);
+    const response = await fetch('https://cyberscore.live/en/teams/', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9'
       }
+    });
 
-      console.log(`✓ Команда [${t.name}] сохранена.`);
+    if (!response.ok) {
+      throw new Error(`Ошибка загрузки страницы: ${response.status}`);
     }
 
-    console.log('✅ Все 30 команд и их составы в базе!');
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const teamsToInsert = [];
+
+    // Ищем таблицу команд
+    $('table tbody tr').each((index, el) => {
+      if (index >= 20) return; // Берем топ-20 команд
+
+      const row = $(el);
+      const rank = parseInt(row.find('td').eq(0).text().trim()) || (index + 1);
+      const nameEl = row.find('td').eq(1);
+      const name = nameEl.find('a').text().trim() || nameEl.text().trim();
+      const teamUrl = nameEl.find('a').attr('href');
+      const logoUrl = row.find('img').attr('src') || '';
+
+      const rating = row.find('td').eq(2).text().trim() || '3.00';
+      const region = row.find('td').eq(3).text().trim() || 'Global';
+      const games = parseInt(row.find('td').eq(4).text().trim()) || 100;
+      const winrate = parseInt(row.find('td').eq(5).text().trim().replace('%', '')) || 50;
+
+      if (name) {
+        const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        teamsToInsert.push({
+          id,
+          rank,
+          name,
+          tag: name.substring(0, 4).toUpperCase(),
+          logo_url: logoUrl.startsWith('http') ? logoUrl : `https://media.cyberscore.live${logoUrl}`,
+          rating: parseFloat(rating) || 3.0,
+          region,
+          region_flag: '🌍',
+          games,
+          wins: Math.round((games * winrate) / 100),
+          losses: Math.round((games * (100 - winrate)) / 100),
+          winrate,
+          prize: '$' + (games * 5000).toLocaleString()
+        });
+      }
+    });
+
+    console.log(`Найдено команд: ${teamsToInsert.length}`);
+
+    if (teamsToInsert.length > 0) {
+      const { error } = await supabase.from('teams').upsert(teamsToInsert);
+      if (error) console.error('Ошибка сохранения команд:', error);
+      else console.log('✅ Все команды сохранены в Supabase!');
+    }
+
   } catch (err) {
-    console.error('Ошибка:', err);
+    console.error('Ошибка при парсинге:', err.message);
   }
 }
 
-syncAll();
+parseCyberScore();
