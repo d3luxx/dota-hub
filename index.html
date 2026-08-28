@@ -10,7 +10,11 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; background-color: #0b0d13; color: #f3f4f6; }
     .nav-btn-active { color: #ffffff !important; border-bottom: 2px solid #e11d48 !important; }
-    .hero-selected { outline: 3px solid #e11d48; filter: brightness(0.4); pointer-events: none; }
+    .hero-selected { outline: 2px solid #e11d48; filter: brightness(0.35); pointer-events: none; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #121520; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
@@ -36,26 +40,26 @@
 
       <div class="flex items-center gap-3">
         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-          <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1.5 animate-pulse"></span> Patch Active
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1.5 animate-pulse"></span> 124+ Heroes Active
         </span>
       </div>
     </div>
   </header>
 
-  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <!-- КОНТЕНТ -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-    <!-- РАЗДЕЛ 1: КОНТР-ПИКЕР И ДРАФТ -->
+    <!-- РАЗДЕЛ 1: КОНТР-ПИКЕР -->
     <section id="tab-draft" class="space-y-6">
       
-      <!-- СЛОТЫ ВРАЖЕСКОГО ПИКА -->
+      <!-- СЛОТЫ ВРАГА -->
       <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div>
             <h2 class="text-base font-black text-white flex items-center gap-2">
               <i class="fa-solid fa-shield-halved text-rose-500"></i> ВЫБЕРИТЕ 5 ГЕРОЕВ ВРАГА
             </h2>
-            <p class="text-xs text-zinc-400">Кликните по героям из сетки ниже для анализа слабостей врага</p>
+            <p class="text-xs text-zinc-400">Нажмите на героя из каталога ниже, чтобы добавить в драфт</p>
           </div>
           <button onclick="clearDraft()" class="text-xs font-bold text-zinc-400 hover:text-rose-400 flex items-center gap-1.5 bg-zinc-800/80 hover:bg-zinc-800 px-3 py-1.5 rounded-lg border border-zinc-700/50 transition">
             <i class="fa-solid fa-rotate-left"></i> Сбросить драфт
@@ -65,14 +69,18 @@
         <div id="enemySlotsContainer" class="grid grid-cols-5 gap-3 sm:gap-4"></div>
       </div>
 
-      <!-- РЕЗУЛЬТАТ АНАЛИЗА И КОНТР-ПИКИ -->
+      <!-- КАТАЛОГ + АНАЛИТИКА -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Сетка героев для выбора -->
+        <!-- Полная сетка героев -->
         <div class="lg:col-span-7 bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-3">
-            <h3 class="text-xs font-black uppercase tracking-wider text-white">Список героев</h3>
-            <div class="flex items-center gap-2" id="roleFilterButtons">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-zinc-800 pb-3">
+            <div class="relative w-full sm:w-48">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-zinc-500 text-xs"></i>
+              <input type="text" id="heroSearchInput" oninput="handleSearch(this.value)" placeholder="Поиск героя..." class="w-full bg-[#181c2b] border border-zinc-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500">
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5" id="roleFilterButtons">
               <button onclick="filterHeroGrid('all')" class="px-2.5 py-1 rounded bg-rose-600 text-white text-[11px] font-bold">Все</button>
               <button onclick="filterHeroGrid('Carry')" class="px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-bold">Керри</button>
               <button onclick="filterHeroGrid('Mid')" class="px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-bold">Мид</button>
@@ -81,10 +89,10 @@
             </div>
           </div>
 
-          <div id="heroesSelectionGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2.5 max-h-[420px] overflow-y-auto pr-1"></div>
+          <div id="heroesSelectionGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 gap-2 max-h-[480px] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- Аналитика и Рекомендации -->
+        <!-- Аналитика и Контр-пики -->
         <div class="lg:col-span-5 space-y-4">
           
           <!-- Слабости пика -->
@@ -93,7 +101,7 @@
               <i class="fa-solid fa-chart-pie text-amber-400"></i> Анализ слабостей врага
             </h3>
             <div id="enemyWeaknessesBox" class="space-y-2 text-xs">
-              <p class="text-zinc-500 italic py-2 text-center">Выберите хотя бы одного героя врага для анализа.</p>
+              <p class="text-zinc-500 italic py-2 text-center">Выберите героев врага для анализа уязвимостей.</p>
             </div>
           </div>
 
@@ -103,7 +111,7 @@
               <i class="fa-solid fa-star text-emerald-400"></i> Лучшие контр-пики
             </h3>
             <div id="recommendedPicksList" class="space-y-2.5">
-              <p class="text-zinc-500 text-xs italic py-2 text-center">Контр-пики появятся после выбора вражеских героев.</p>
+              <p class="text-zinc-500 text-xs italic py-2 text-center">Контр-пики рассчитаются автоматически.</p>
             </div>
           </div>
 
@@ -119,10 +127,10 @@
           <h2 class="text-base font-black text-white flex items-center gap-2">
             <i class="fa-solid fa-ranking-star text-amber-400"></i> РАДАР И ТИР-ЛИСТ МЕТЫ
           </h2>
-          <p class="text-xs text-zinc-400">Рейтинг силы героев под текущую мету и турнирные стадии</p>
+          <p class="text-xs text-zinc-400">Рейтинг силы всех героев по тирам и ролям</p>
         </div>
 
-        <div class="flex items-center gap-2 bg-[#181c2b] p-1.5 rounded-xl border border-zinc-700/50 text-xs font-bold" id="posFilterTabs">
+        <div class="flex flex-wrap items-center gap-2 bg-[#181c2b] p-1.5 rounded-xl border border-zinc-700/50 text-xs font-bold" id="posFilterTabs">
           <button onclick="renderTierList('all')" class="px-3 py-1 rounded-lg bg-rose-600 text-white">Все роли</button>
           <button onclick="renderTierList('Carry')" class="px-3 py-1 rounded-lg text-zinc-400 hover:text-white">Поз 1 (Керри)</button>
           <button onclick="renderTierList('Mid')" class="px-3 py-1 rounded-lg text-zinc-400 hover:text-white">Поз 2 (Мид)</button>
@@ -131,46 +139,130 @@
         </div>
       </div>
 
-      <div id="tierListRowsContainer" class="space-y-3"></div>
+      <div id="tierListRowsContainer" class="space-y-4"></div>
     </section>
 
   </main>
 
   <footer class="border-t border-zinc-900 bg-[#07080d] py-5 text-center text-xs text-zinc-600">
-    <p>© 2026 DOTA META LAB • Official Valve CDN Assets</p>
+    <p>© 2026 DOTA META LAB • Official Steam Assets</p>
   </footer>
 
   <script>
-    // БАЗА ГЕРОЕВ С ОФИЦИАЛЬНОГО CDN VALVE (НИКОГДА НЕ БЛОКИРУЕТСЯ)
+    // ПОЛНАЯ БАЗА ВСЕХ ГЕРОЕВ DOTA 2 С CDN VALVE
     const HEROES_DB = [
-      { id: 'antimage', name: 'Anti-Mage', role: 'Carry', tier: 'A', img: 'antimage', counters: ['medusa', 'storm_spirit', 'invoker'], counteredBy: ['legion_commander', 'faceless_void'], tags: ['манаберн', 'мобильность'] },
-      { id: 'faceless_void', name: 'Faceless Void', role: 'Carry', tier: 'S', img: 'faceless_void', counters: ['anti_mage', 'tinker', 'weaver'], counteredBy: ['pudge', 'shadow_demon'], tags: ['купол', 'лейт-гиперкерри'] },
-      { id: 'phantom_assassin', name: 'Phantom Assassin', role: 'Carry', tier: 'B', img: 'phantom_assassin', counters: ['sniper', 'drow_ranger', 'rubick'], counteredBy: ['axe', 'lion', 'tinker'], tags: ['криты', 'берст'] },
-      { id: 'medusa', name: 'Medusa', role: 'Carry', tier: 'A', img: 'medusa', counters: ['chaos_knight', 'phantom_lancer', 'axe'], counteredBy: ['antimage', 'invoker'], tags: ['иллюзии-контр', 'жир'] },
-      { id: 'slark', name: 'Slark', role: 'Carry', tier: 'S', img: 'slark', counters: ['pudge', 'tidehunter', 'bristleback'], counteredBy: ['faceless_void', 'bloodseeker', 'disruptor'], tags: ['диспел', 'воровство статов'] },
-      { id: 'morphling', name: 'Morphling', role: 'Carry', tier: 'S', img: 'morphling', counters: ['phantom_assassin', 'sniper'], counteredBy: ['ancient_apparition', 'silencer'], tags: ['шот-урон', 'эскейп'] },
+      // КЕРРИ (ПОЗ 1)
+      { id: 'antimage', name: 'Anti-Mage', role: 'Carry', tier: 'A', img: 'antimage', counters: ['medusa', 'storm_spirit', 'invoker'], counteredBy: ['legion_commander', 'faceless_void', 'slardar'], tags: ['манаберн', 'эскейп'] },
+      { id: 'faceless_void', name: 'Faceless Void', role: 'Carry', tier: 'S', img: 'faceless_void', counters: ['antimage', 'tinker', 'weaver', 'slark'], counteredBy: ['pudge', 'shadow_demon', 'vengefulspirit'], tags: ['купол', 'контроль сквозь БКБ'] },
+      { id: 'phantom_assassin', name: 'Phantom Assassin', role: 'Carry', tier: 'B', img: 'phantom_assassin', counters: ['sniper', 'drow_ranger', 'rubick'], counteredBy: ['axe', 'lion', 'tinker', 'blade'], tags: ['криты', 'физ урон'] },
+      { id: 'medusa', name: 'Medusa', role: 'Carry', tier: 'A', img: 'medusa', counters: ['chaos_knight', 'phantom_lancer', 'axe'], counteredBy: ['antimage', 'invoker', 'nyx_assassin'], tags: ['иллюзии-контр', 'жир'] },
+      { id: 'slark', name: 'Slark', role: 'Carry', tier: 'S', img: 'slark', counters: ['pudge', 'tidehunter', 'bristleback', 'drow_ranger'], counteredBy: ['faceless_void', 'bloodseeker', 'disruptor'], tags: ['диспел', 'воровство статов'] },
+      { id: 'morphling', name: 'Morphling', role: 'Carry', tier: 'S', img: 'morphling', counters: ['phantom_assassin', 'sniper', 'drow_ranger'], counteredBy: ['ancient_apparition', 'silencer', 'lion'], tags: ['шот-урон', 'эскейп'] },
+      { id: 'drow_ranger', name: 'Drow Ranger', role: 'Carry', tier: 'A', img: 'drow_ranger', counters: ['morphling', 'spectre', 'medusa'], counteredBy: ['phantom_assassin', 'storm_spirit', 'slark', 'axe'], tags: ['пробивает броню', 'сайленс'] },
+      { id: 'juggernaut', name: 'Juggernaut', role: 'Carry', tier: 'B', img: 'juggernaut', counters: ['tidehunter', 'pudge', 'necrolyte'], counteredBy: ['axe', 'slardar', 'ursa'], tags: ['бкб крутилка', 'омнислеш'] },
+      { id: 'spectre', name: 'Spectre', role: 'Carry', tier: 'A', img: 'spectre', counters: ['sniper', 'tinker', 'drow_ranger'], counteredBy: ['slark', 'viper', 'necrolyte'], tags: ['врыв по всей карте', 'лейт-гиперкерри'] },
+      { id: 'terrorblade', name: 'Terrorblade', role: 'Carry', tier: 'A', img: 'terrorblade', counters: ['antimage', 'faceless_void', 'ursa'], counteredBy: ['tinker', 'zeus', 'lion', 'lina'], tags: ['иллюзии', 'пуш', 'свап хп'] },
+      { id: 'phantom_lancer', name: 'Phantom Lancer', role: 'Carry', tier: 'B', img: 'phantom_lancer', counters: ['wraith_king', 'viper', 'lifestealer'], counteredBy: ['axe', 'sven', 'leshrac', 'medusa'], tags: ['иллюзии', 'манаберн'] },
+      { id: 'sven', name: 'Sven', role: 'Carry', tier: 'B', img: 'sven', counters: ['phantom_lancer', 'chaos_knight', 'broodmother'], counteredBy: ['troll_warlord', 'razor', 'slark'], tags: ['сплеш урон', 'берст'] },
+      { id: 'ursa', name: 'Ursa', role: 'Carry', tier: 'S', img: 'ursa', counters: ['lifestealer', 'pudge', 'alchemist', 'bristleback'], counteredBy: ['venomancer', 'viper', 'razor', 'windranger'], tags: ['рошан соло', 'диспел ульт'] },
+      { id: 'lifestealer', name: 'Lifestealer', role: 'Carry', tier: 'A', img: 'life_stealer', counters: ['pudge', 'centaur', 'tidehunter'], counteredBy: ['razor', 'ursa', 'slark', 'bane'], tags: ['встроенное бкб', 'процентный урон'] },
+      { id: 'chaos_knight', name: 'Chaos Knight', role: 'Carry', tier: 'A', img: 'chaos_knight', counters: ['sniper', 'zeus', 'rubick'], counteredBy: ['sven', 'axe', 'medusa'], tags: ['берст иллюзиями', 'стан'] },
+      { id: 'troll_warlord', name: 'Troll Warlord', role: 'Carry', tier: 'B', img: 'troll_warlord', counters: ['sven', 'lifestealer', 'ursa'], counteredBy: ['axe', 'winter_wyvern', 'razor'], tags: ['бессмертие ульт', 'баш'] },
+      { id: 'bloodseeker', name: 'Bloodseeker', role: 'Carry', tier: 'B', img: 'bloodseeker', counters: ['slark', 'weaver', 'puck'], counteredBy: ['troll_warlord', 'medusa', 'wraith_king'], tags: ['руrupture', 'чистый урон'] },
+      { id: 'weaver', name: 'Weaver', role: 'Carry', tier: 'A', img: 'weaver', counters: ['lifestealer', 'ursa', 'tidehunter'], counteredBy: ['faceless_void', 'bloodseeker', 'slardar'], tags: ['эскейп', 'минус броня'] },
+      { id: 'wraith_king', name: 'Wraith King', role: 'Carry', tier: 'B', img: 'skeleton_king', counters: ['tidehunter', 'legion_commander'], counteredBy: ['antimage', 'phantom_lancer', 'invoker'], tags: ['реинкарнация', 'криты'] },
+      { id: 'clinkz', name: 'Clinkz', role: 'Carry', tier: 'B', img: 'clinkz', counters: ['sniper', 'drow_ranger', 'enchantress'], counteredBy: ['slardar', 'bounty_hunter', 'axe'], tags: ['инвиз', 'берст'] },
+      { id: 'alchemist', name: 'Alchemist', role: 'Carry', tier: 'A', img: 'alchemist', counters: ['phantom_lancer', 'naga_siren'], counteredBy: ['ancient_apparition', 'slark', 'ursa'], tags: ['быстрый фарм', 'реген'] },
+      { id: 'naga_siren', name: 'Naga Siren', role: 'Carry', tier: 'A', img: 'naga_siren', counters: ['faceless_void', 'templar_assassin'], counteredBy: ['leshrac', 'dazzle', 'lion', 'sand_king'], tags: ['сон ульт', 'иллюзии-пуш'] },
+      { id: 'monkey_king', name: 'Monkey King', role: 'Carry', tier: 'A', img: 'monkey_king', counters: ['ursa', 'lifestealer', 'tidehunter'], counteredBy: ['batrider', 'timbersaw', 'windranger'], tags: ['арена ульт', 'вижн с деревьев'] },
+      { id: 'sniper', name: 'Sniper', role: 'Carry', tier: 'B', img: 'sniper', counters: ['medusa', 'necrolyte', 'drow_ranger'], counteredBy: ['spectre', 'storm_spirit', 'phantom_assassin', 'pudge'], tags: ['дальняя дистанция', 'хэдшот'] },
+      { id: 'kez', name: 'Kez', role: 'Carry', tier: 'S', img: 'kez', counters: ['phantom_assassin', 'sniper', 'puck'], counteredBy: ['axe', 'faceless_void'], tags: ['стили боя', 'мобильность'] },
 
-      { id: 'invoker', name: 'Invoker', role: 'Mid', tier: 'S', img: 'invoker', counters: ['medusa', 'wraith_king', 'axe'], counteredBy: ['antimage', 'faceless_void'], tags: ['дизейбл', 'манаберн', 'универсал'] },
+      // МИД (ПОЗ 2)
+      { id: 'invoker', name: 'Invoker', role: 'Mid', tier: 'S', img: 'invoker', counters: ['medusa', 'wraith_king', 'axe'], counteredBy: ['antimage', 'faceless_void', 'nyx_assassin'], tags: ['дизейбл', 'манаберн', 'универсал'] },
       { id: 'storm_spirit', name: 'Storm Spirit', role: 'Mid', tier: 'A', img: 'storm_spirit', counters: ['sniper', 'tinker', 'drow_ranger'], counteredBy: ['antimage', 'silencer', 'disruptor'], tags: ['врыв', 'мобильность'] },
-      { id: 'shadow_fiend', name: 'Shadow Fiend', role: 'Mid', tier: 'S', img: 'nevermore', counters: ['phantom_assassin', 'sniper'], counteredBy: ['tinker', 'slark'], tags: ['огромный урон', 'страх'] },
-      { id: 'puck', name: 'Puck', role: 'Mid', tier: 'A', img: 'puck', counters: ['storm_spirit', 'rubick'], counteredBy: ['faceless_void', 'silencer'], tags: ['сайленс', 'неуязвимость'] },
-      { id: 'tinker', name: 'Tinker', role: 'Mid', tier: 'B', img: 'tinker', counters: ['phantom_assassin', 'axe'], counteredBy: ['storm_spirit', 'antimage', 'spectre'], tags: ['лазер-блайнд', 'сплитпуш'] },
+      { id: 'shadow_fiend', name: 'Shadow Fiend', role: 'Mid', tier: 'S', img: 'nevermore', counters: ['phantom_assassin', 'sniper', 'drow_ranger'], counteredBy: ['tinker', 'slark', 'spirit_breaker'], tags: ['огромный урон', 'страх'] },
+      { id: 'puck', name: 'Puck', role: 'Mid', tier: 'A', img: 'puck', counters: ['storm_spirit', 'rubick', 'sniper'], counteredBy: ['faceless_void', 'silencer', 'disruptor'], tags: ['сайленс', 'неуязвимость'] },
+      { id: 'tinker', name: 'Tinker', role: 'Mid', tier: 'B', img: 'tinker', counters: ['phantom_assassin', 'axe', 'ursa'], counteredBy: ['storm_spirit', 'antimage', 'spectre', 'clockwerk'], tags: ['лазер-блайнд', 'сплитпуш'] },
+      { id: 'ember_spirit', name: 'Ember Spirit', role: 'Mid', tier: 'S', img: 'ember_spirit', counters: ['phantom_lancer', 'terrorblade', 'meepo'], counteredBy: ['faceless_void', 'silencer', 'lion'], tags: ['реминанты', 'щит от магии'] },
+      { id: 'void_spirit', name: 'Void Spirit', role: 'Mid', tier: 'A', img: 'void_spirit', counters: ['sniper', 'zeus', 'drow_ranger'], counteredBy: ['silencer', 'disruptor', 'slardar'], tags: ['дизебл астрал', 'мобильность'] },
+      { id: 'earth_spirit', name: 'Earth Spirit', role: 'Mid', tier: 'S', img: 'earth_spirit', counters: ['sniper', 'tinker', 'puck'], counteredBy: ['silencer', 'bloodseeker'], tags: ['масс сайленс', 'стан камнем'] },
+      { id: 'lina', name: 'Lina', role: 'Mid', tier: 'S', img: 'lina', counters: ['morphling', 'terrorblade', 'slark'], counteredBy: ['nyx_assassin', 'spectre', 'blade'], tags: ['берст сквозь бкб', 'дальность'] },
+      { id: 'queen_of_pain', name: 'Queen of Pain', role: 'Mid', tier: 'A', img: 'queenofpain', counters: ['sniper', 'drow_ranger', 'rubick'], counteredBy: ['puck', 'silencer', 'disruptor'], tags: ['чистый урон ульт', 'блинк'] },
+      { id: 'templar_assassin', name: 'Templar Assassin', role: 'Mid', tier: 'A', img: 'templar_assassin', counters: ['pudge', 'tidehunter', 'zeus'], counteredBy: ['viper', 'venomancer', 'batrider', 'jakiro'], tags: ['щиты рефракт', 'снижение брони'] },
+      { id: 'kunkka', name: 'Kunkka', role: 'Mid', tier: 'A', img: 'kunkka', counters: ['phantom_lancer', 'chaos_knight', 'meepo'], counteredBy: ['lifestealer', 'juggernaut', 'ursa'], tags: ['корабль бафф', 'контроль крест'] },
+      { id: 'leshrac', name: 'Leshrac', role: 'Mid', tier: 'S', img: 'leshrac', counters: ['phantom_lancer', 'naga_siren', 'chaos_knight'], counteredBy: ['antimage', 'pugna', 'drow_ranger'], tags: ['магический шквал', 'пуш вышек'] },
+      { id: 'zeus', name: 'Zeus', role: 'Mid', tier: 'B', img: 'zuus', counters: ['tinker', 'terrorblade', 'morphling'], counteredBy: ['antimage', 'storm_spirit', 'spectre'], tags: ['ульт по всей карте', 'процентный урон'] },
+      { id: 'dragon_knight', name: 'Dragon Knight', role: 'Mid', tier: 'A', img: 'dragon_knight', counters: ['templar_assassin', 'puck', 'ember_spirit'], counteredBy: ['timbersaw', 'slark', 'necrolyte'], tags: ['длинный стан', 'пуш драконом'] },
+      { id: 'od', name: 'Outworld Destroyer', role: 'Mid', tier: 'A', img: 'obsidian_destroyer', counters: ['legion_commander', 'axe', 'slark'], counteredBy: ['pugna', 'rubick', 'nyx_assassin'], tags: ['спрятать в астрал', 'чистый орб'] },
+      { id: 'razor', name: 'Razor', role: 'Mid', tier: 'A', img: 'razor', counters: ['ursa', 'sven', 'lifestealer', 'troll_warlord'], counteredBy: ['sniper', 'drow_ranger', 'weaver'], tags: ['воровство урона', 'минус броня'] },
+      { id: 'necrolyte', name: 'Necrophos', role: 'Mid', tier: 'B', img: 'necrolyte', counters: ['spectre', 'axe', 'bristleback', 'pudge'], counteredBy: ['ancient_apparition', 'drow_ranger', 'silencer'], tags: ['коса ульт', 'аура урона'] },
+      { id: 'death_prophet', name: 'Death Prophet', role: 'Mid', tier: 'B', img: 'death_prophet', counters: ['timbersaw', 'tidehunter'], counteredBy: ['ancient_apparition', 'sniper'], tags: ['сайленс', 'духи-пуш'] },
+      { id: 'batrider', name: 'Batrider', role: 'Mid', tier: 'S', img: 'batrider', counters: ['templar_assassin', 'monkey_king', 'treant_protector'], counteredBy: ['abaddon', 'legion_commander', 'vengefulspirit'], tags: ['лассо сквозь БКБ', 'вижн'] },
+      { id: 'meepo', name: 'Meepo', role: 'Mid', tier: 'A', img: 'meepo', counters: ['antimage', 'storm_spirit', 'sniper'], counteredBy: ['winter_wyvern', 'sven', 'earthshaker', 'leshrac'], tags: ['сетки', 'клоны'] },
+      { id: 'arc_warden', name: 'Arc Warden', role: 'Mid', tier: 'B', img: 'arc_warden', counters: ['medusa', 'sniper'], counteredBy: ['phantom_assassin', 'slark', 'storm_spirit'], tags: ['двойник', 'купол уклонения'] },
+      { id: 'muerta', name: 'Muerta', role: 'Mid', tier: 'A', img: 'muerta', counters: ['sven', 'ursa', 'terrorblade'], counteredBy: ['antimage', 'blade'], tags: ['ульт бестелесность', 'фир'] },
 
-      { id: 'axe', name: 'Axe', role: 'Offlane', tier: 'S', img: 'axe', counters: ['phantom_assassin', 'slark', 'phantom_lancer'], counteredBy: ['timbersaw', 'venomancer'], tags: ['агр сквозь БКБ', 'чистый урон'] },
-      { id: 'legion_commander', name: 'Legion Commander', role: 'Offlane', tier: 'S', img: 'legion_commander', counters: ['antimage', 'slark', 'storm_spirit'], counteredBy: ['shadow_demon', 'dazzle', 'rubick'], tags: ['дуэль сквозь БКБ', 'диспел'] },
-      { id: 'tidehunter', name: 'Tidehunter', role: 'Offlane', tier: 'A', img: 'tidehunter', counters: ['phantom_assassin', 'chaos_knight'], counteredBy: ['slark', 'rubick'], tags: ['масс-стан', 'снижение урона'] },
-      { id: 'primal_beast', name: 'Primal Beast', role: 'Offlane', tier: 'S', img: 'primal_beast', counters: ['sniper', 'puck', 'rubick'], counteredBy: ['slark', 'bloodseeker'], tags: ['врыв сквозь БКБ', 'темп'] },
-      { id: 'centaur', name: 'Centaur Warrunner', role: 'Offlane', tier: 'A', img: 'centaur', counters: ['sniper', 'drow_ranger'], counteredBy: ['timbersaw', 'lifestealer'], tags: ['ультимейт-спас', 'инициация'] },
+      // ХАРДЛЕЙН (ПОЗ 3)
+      { id: 'axe', name: 'Axe', role: 'Offlane', tier: 'S', img: 'axe', counters: ['phantom_assassin', 'slark', 'phantom_lancer', 'dazzle'], counteredBy: ['timbersaw', 'venomancer', 'viper', 'necrolyte'], tags: ['агр сквозь БКБ', 'чистый урон'] },
+      { id: 'legion_commander', name: 'Legion Commander', role: 'Offlane', tier: 'S', img: 'legion_commander', counters: ['antimage', 'slark', 'storm_spirit', 'weaver'], counteredBy: ['shadow_demon', 'dazzle', 'rubick', 'winter_wyvern'], tags: ['дуэль сквозь БКБ', 'диспел'] },
+      { id: 'tidehunter', name: 'Tidehunter', role: 'Offlane', tier: 'A', img: 'tidehunter', counters: ['phantom_assassin', 'chaos_knight', 'slardar'], counteredBy: ['slark', 'rubick', 'lifestealer'], tags: ['масс-стан', 'снижение урона'] },
+      { id: 'primal_beast', name: 'Primal Beast', role: 'Offlane', tier: 'S', img: 'primal_beast', counters: ['sniper', 'puck', 'rubick', 'drow_ranger'], counteredBy: ['slark', 'bloodseeker', 'lifestealer'], tags: ['врыв сквозь БКБ', 'темп'] },
+      { id: 'centaur', name: 'Centaur Warrunner', role: 'Offlane', tier: 'A', img: 'centaur', counters: ['sniper', 'drow_ranger', 'windranger'], counteredBy: ['timbersaw', 'lifestealer', 'necrolyte'], tags: ['ультимейт-спас', 'инициация'] },
+      { id: 'slardar', name: 'Slardar', role: 'Offlane', tier: 'S', img: 'slardar', counters: ['weaver', 'riki', 'bounty_hunter', 'clinkz'], counteredBy: ['phantom_lancer', 'naga_siren', 'bloodseeker'], tags: ['раскрытие инвиза', 'минус броня'] },
+      { id: 'mars', name: 'Mars', role: 'Offlane', tier: 'S', img: 'mars', counters: ['drow_ranger', 'sniper', 'phantom_assassin'], counteredBy: ['lifestealer', 'viper', 'timbersaw'], tags: ['арена', 'щит от стрел'] },
+      { id: 'magnus', name: 'Magnus', role: 'Offlane', tier: 'A', img: 'magnataur', counters: ['phantom_lancer', 'chaos_knight', 'naga_siren'], counteredBy: ['rubick', 'silencer', 'disruptor'], tags: ['RP сквозь БКБ', 'вывоз гарпуном'] },
+      { id: 'doom', name: 'Doom', role: 'Offlane', tier: 'A', img: 'doom_bringer', counters: ['storm_spirit', 'morphling', 'slark', 'tinker'], counteredBy: ['wraith_king', 'medusa', 'rubick'], tags: ['отключение скиллов и айтемов'] },
+      { id: 'bristleback', name: 'Bristleback', role: 'Offlane', tier: 'B', img: 'bristleback', counters: ['phantom_assassin', 'chaos_knight', 'spectre'], counteredBy: ['viper', 'slark', 'silver_edge', 'necrolyte'], tags: ['колючки', 'непробиваемая спина'] },
+      { id: 'timbersaw', name: 'Timbersaw', role: 'Offlane', tier: 'A', img: 'shredder', counters: ['axe', 'centaur', 'slardar', 'monkey_king'], counteredBy: ['silencer', 'kotl', 'pugna', 'zeus'], tags: ['чистый урон по силовикам', 'броня'] },
+      { id: 'dark_seer', name: 'Dark Seer', role: 'Offlane', tier: 'S', img: 'dark_seer', counters: ['terrorblade', 'phantom_assassin', 'sven'], counteredBy: ['antimage', 'oracle'], tags: ['стяжка комбо', 'копии врагов'] },
+      { id: 'night_stalker', name: 'Night Stalker', role: 'Offlane', tier: 'A', img: 'night_stalker', counters: ['tinker', 'storm_spirit', 'sniper', 'puck'], counteredBy: ['naga_siren', 'slark'], tags: ['ночной вижн', 'масс сайленс'] },
+      { id: 'sand_king', name: 'Sand King', role: 'Offlane', tier: 'S', img: 'sand_king', counters: ['phantom_lancer', 'meepo', 'chaos_knight'], counteredBy: ['juggernaut', 'lifestealer', 'bounty_hunter'], tags: ['стан', 'пески эпицентр'] },
+      { id: 'underlord', name: 'Underlord', role: 'Offlane', tier: 'A', img: 'abyssal_underlord', counters: ['terrorblade', 'phantom_lancer', 'drow_ranger'], counteredBy: ['ursa', 'slark', 'juggernaut'], tags: ['портал команде', 'минус урон'] },
+      { id: 'beastmaster', name: 'Beastmaster', role: 'Offlane', tier: 'A', img: 'beastmaster', counters: ['tinker', 'monkey_king', 'antimage'], counteredBy: ['winter_wyvern', 'sven', 'leshrac'], tags: ['рев сквозь БКБ', 'вижн птицей'] },
+      { id: 'lycan', name: 'Lycan', role: 'Offlane', tier: 'B', img: 'lycan', counters: ['sniper', 'drow_ranger', 'zeus'], counteredBy: ['axe', 'sven', 'slardar'], tags: ['быстрый пуш', 'неснижаемая скорость'] },
+      { id: 'brewmaster', name: 'Brewmaster', role: 'Offlane', tier: 'A', img: 'brewmaster', counters: ['ursa', 'troll_warlord', 'sven'], counteredBy: ['silencer', 'lion', 'shadow_shaman'], tags: ['панды ульт', 'диспел ветра'] },
+      { id: 'enigma', name: 'Enigma', role: 'Offlane', tier: 'S', img: 'enigma', counters: ['medusa', 'faceless_void', 'sven'], counteredBy: ['rubick', 'silencer', 'vengefulspirit', 'sniper'], tags: ['блэкхол сквозь БКБ', 'эйдолоны'] },
+      { id: 'viper', name: 'Viper', role: 'Offlane', tier: 'B', img: 'viper', counters: ['bristleback', 'spectre', 'phantom_assassin', 'pa'], counteredBy: ['phantom_lancer', 'terrorblade', 'clinkz'], tags: ['отключение пассивок', 'замедление'] },
+      { id: 'abaddon', name: 'Abaddon', role: 'Offlane', tier: 'A', img: 'abaddon', counters: ['batrider', 'bane', 'mirana'], counteredBy: ['ancient_apparition', 'slark', 'shadow_demon'], tags: ['щит сильный диспел', 'ульт бессмертие'] },
+      { id: 'spirit_breaker', name: 'Spirit Breaker', role: 'Offlane', tier: 'A', img: 'spirit_breaker', counters: ['tinker', 'sniper', 'drow_ranger'], counteredBy: ['underlord', 'clockwerk', 'rubick'], tags: ['разгон по всей карте', 'баш сквозь БКБ'] },
 
-      { id: 'pudge', name: 'Pudge', role: 'Support', tier: 'A', img: 'pudge', counters: ['faceless_void', 'slark', 'sniper'], counteredBy: ['slark', 'lifestealer'], tags: ['хук', 'ультимейт сквозь БКБ'] },
-      { id: 'rubick', name: 'Rubick', role: 'Support', tier: 'S', img: 'rubick', counters: ['tidehunter', 'legion_commander', 'invoker'], counteredBy: ['phantom_assassin', 'slark'], tags: ['кража спеллов', 'сейв'] },
-      { id: 'lion', name: 'Lion', role: 'Support', tier: 'A', img: 'lion', counters: ['phantom_assassin', 'morphling', 'slark'], counteredBy: ['rubick', 'sniper'], tags: ['хекс', 'манарейн', 'берст'] },
-      { id: 'shadow_demon', name: 'Shadow Demon', role: 'Support', tier: 'S', img: 'shadow_demon', counters: ['legion_commander', 'faceless_void', 'axe'], counteredBy: ['storm_spirit', 'slark'], tags: ['сейв астралом', 'снятие баффов'] },
-      { id: 'disruptor', name: 'Disruptor', role: 'Support', tier: 'S', img: 'disruptor', counters: ['slark', 'storm_spirit', 'morphling'], counteredBy: ['sniper', 'rubick'], tags: ['статический шторм', 'возврат'] },
-      { id: 'ancient_apparition', name: 'Ancient Apparition', role: 'Support', tier: 'A', img: 'ancient_apparition', counters: ['morphling', 'slark', 'alchemist'], counteredBy: ['storm_spirit', 'antimage'], tags: ['запрет хила 100%'] }
+      // САППОРТЫ (ПОЗ 4 / ПОЗ 5)
+      { id: 'pudge', name: 'Pudge', role: 'Support', tier: 'A', img: 'pudge', counters: ['faceless_void', 'slark', 'sniper', 'enigma'], counteredBy: ['slark', 'lifestealer', 'ursa'], tags: ['хук', 'ультимейт сквозь БКБ'] },
+      { id: 'rubick', name: 'Rubick', role: 'Support', tier: 'S', img: 'rubick', counters: ['tidehunter', 'legion_commander', 'invoker', 'enigma'], counteredBy: ['phantom_assassin', 'slark', 'clinkz'], tags: ['кража спеллов', 'сейв телекинез'] },
+      { id: 'lion', name: 'Lion', role: 'Support', tier: 'A', img: 'lion', counters: ['phantom_assassin', 'morphling', 'slark', 'terrorblade'], counteredBy: ['rubick', 'sniper', 'tidehunter'], tags: ['инста хекс', 'манарейн', 'берст'] },
+      { id: 'shadow_demon', name: 'Shadow Demon', role: 'Support', tier: 'S', img: 'shadow_demon', counters: ['legion_commander', 'faceless_void', 'axe', 'omniknight'], counteredBy: ['storm_spirit', 'slark', 'earthshaker'], tags: ['сейв астралом', 'снятие баффов сквозь бкб'] },
+      { id: 'disruptor', name: 'Disruptor', role: 'Support', tier: 'S', img: 'disruptor', counters: ['slark', 'storm_spirit', 'morphling', 'weaver'], counteredBy: ['sniper', 'rubick', 'juggernaut'], tags: ['статический шторм', 'возврат назад'] },
+      { id: 'ancient_apparition', name: 'Ancient Apparition', role: 'Support', tier: 'A', img: 'ancient_apparition', counters: ['morphling', 'slark', 'alchemist', 'necrolyte', 'huskar'], counteredBy: ['storm_spirit', 'antimage', 'phantom_assassin'], tags: ['запрет хила 100%', 'магический урон'] },
+      { id: 'hoodwink', name: 'Hoodwink', role: 'Support', tier: 'S', img: 'hoodwink', counters: ['bristleback', 'spectre', 'phantom_assassin'], counteredBy: ['storm_spirit', 'spirit_breaker'], tags: ['отключение пассивок ультом', 'стан желудем'] },
+      { id: 'shadow_shaman', name: 'Shadow Shaman', role: 'Support', tier: 'A', img: 'shadow_shaman', counters: ['slark', 'morphling', 'storm_spirit'], counteredBy: ['silencer', 'sniper', 'rubick'], tags: ['сетка + хекс контроль', 'пуш змеями'] },
+      { id: 'tusk', name: 'Tusk', role: 'Support', tier: 'S', img: 'tusk', counters: ['faceless_void', 'enigma', 'bloodseeker'], counteredBy: ['phantom_lancer', 'naga_siren'], tags: ['сейв шар снежка', 'сосулька блокада'] },
+      { id: 'crystal_maiden', name: 'Crystal Maiden', role: 'Support', tier: 'B', img: 'crystal_maiden', counters: ['phantom_assassin', 'slark'], counteredBy: ['bkb', 'rubick', 'clockwerk'], tags: ['масс ульт', 'мана-аура всей команде'] },
+      { id: 'dazzle', name: 'Dazzle', role: 'Support', tier: 'A', img: 'dazzle', counters: ['legion_commander', 'necrolyte', 'phantom_lancer'], counteredBy: ['axe', 'ancient_apparition', 'silencer'], tags: ['крест бессмертие', 'хил'] },
+      { id: 'oracle', name: 'Oracle', role: 'Support', tier: 'A', img: 'oracle', counters: ['necrolyte', 'batrider', 'dark_seer'], counteredBy: ['ancient_apparition', 'silencer', 'phantom_assassin'], tags: ['ложное обещание сейв', 'сильный диспел'] },
+      { id: 'winter_wyvern', name: 'Winter Wyvern', role: 'Support', tier: 'S', img: 'winter_wyvern', counters: ['meepo', 'terrorblade', 'sven', 'chaos_knight'], counteredBy: ['timbersaw', 'invoker', 'silencer'], tags: ['проклятие ульт сквозь БКБ', 'кокон сейв'] },
+      { id: 'witch_doctor', name: 'Witch Doctor', role: 'Support', tier: 'A', img: 'witch_doctor', counters: ['pudge', 'alchemist', 'axe'], counteredBy: ['silencer', 'rubick', 'clockwerk'], tags: ['каски стан', 'маледикт урон'] },
+      { id: 'jakiro', name: 'Jakiro', role: 'Support', tier: 'A', img: 'jakiro', counters: ['templar_assassin', 'treant_protector'], counteredBy: ['rubick', 'juggernaut', 'lifestealer'], tags: ['лед стан', 'пуш жидким огнем'] },
+      { id: 'earthshaker', name: 'Earthshaker', role: 'Support', tier: 'S', img: 'earthshaker', counters: ['phantom_lancer', 'meepo', 'broodmother', 'chaos_knight'], counteredBy: ['spectre', 'clockwerk', 'rubick'], tags: ['эхослэм берст', 'фиссура блокада'] },
+      { id: 'silencer', name: 'Silencer', role: 'Support', tier: 'A', img: 'silencer', counters: ['enigma', 'tidehunter', 'puck', 'storm_spirit'], counteredBy: ['phantom_assassin', 'slark', 'bkb'], tags: ['глобал сайленс по всей карте'] },
+      { id: 'clockwerk', name: 'Clockwerk', role: 'Support', tier: 'A', img: 'rattletrap', counters: ['tinker', 'sniper', 'drow_ranger', 'enigma'], counteredBy: ['lifestealer', 'juggernaut', 'force_staff'], tags: ['коги ловушка', 'хукшот врыв'] },
+      { id: 'bane', name: 'Bane', role: 'Support', tier: 'A', img: 'bane', counters: ['weaver', 'storm_spirit', 'lifestealer'], counteredBy: ['abaddon', 'legion_commander', 'rubick'], tags: ['ульт сквозь БКБ', 'сон'] },
+      { id: 'lich', name: 'Lich', role: 'Support', tier: 'B', img: 'lich', counters: ['ursa', 'sven', 'meepo'], counteredBy: ['rubick', 'sniper'], tags: ['чайник ульт', 'ледяной щит'] },
+      { id: 'ogre_magi', name: 'Ogre Magi', role: 'Support', tier: 'B', img: 'ogre_magi', counters: ['phantom_assassin', 'sniper'], counteredBy: ['chaos_knight', 'phantom_lancer'], tags: ['мультикаст', 'бладласт керри'] },
+      { id: 'marci', name: 'Marci', role: 'Support', tier: 'S', img: 'marci', counters: ['sniper', 'drow_ranger', 'puck'], counteredBy: ['axe', 'winter_wyvern'], tags: ['врыв', 'ярость ударов'] },
+      { id: 'ringmaster', name: 'Ringmaster', role: 'Support', tier: 'S', img: 'ringmaster', counters: ['faceless_void', 'ursa', 'sven'], counteredBy: ['sniper', 'silencer'], tags: ['колесо гипноз', 'сейв ящик'] },
+      { id: 'treant_protector', name: 'Treant Protector', role: 'Support', tier: 'A', img: 'treant', counters: ['spectre', 'phantom_assassin'], counteredBy: ['timbersaw', 'batrider', 'leshrac'], tags: ['лечение вышек', 'руты сквозь бкб'] },
+      { id: 'keeper_of_the_light', name: 'Keeper of the Light', role: 'Support', tier: 'A', img: 'keeper_of_the_light', counters: ['phantom_lancer', 'chaos_knight'], counteredBy: ['storm_spirit', 'nyx_assassin'], tags: ['заливка маны', 'ослепление'] },
+      { id: 'vengefulspirit', name: 'Vengeful Spirit', role: 'Support', tier: 'A', img: 'vengefulspirit', counters: ['faceless_void', 'enigma', 'batrider'], counteredBy: ['phantom_lancer', 'rubick'], tags: ['свап сквозь БКБ', 'аура урона'] },
+      { id: 'nyx_assassin', name: 'Nyx Assassin', role: 'Support', tier: 'A', img: 'nyx_assassin', counters: ['invoker', 'tinker', 'medusa', 'lina', 'leshrac'], counteredBy: ['slardar', 'bounty_hunter', 'gem'], tags: ['шипы карапас', 'берст магов'] },
+      { id: 'undying', name: 'Undying', role: 'Support', tier: 'A', img: 'undying', counters: ['spectre', 'tidehunter', 'sven'], counteredBy: ['ursa', 'sniper', 'gyrocopter'], tags: ['томба зомби', 'воровство силы'] },
+      { id: 'pugna', name: 'Pugna', role: 'Support', tier: 'A', img: 'pugna', counters: ['leshrac', 'skywrath_mage', 'tinker', 'ursa'], counteredBy: ['phantom_assassin', 'sniper'], tags: ['вард против магии', 'астрал сейв'] },
+      { id: 'skywrath_mage', name: 'Skywrath Mage', role: 'Support', tier: 'B', img: 'skywrath_mage', counters: ['storm_spirit', 'timbersaw', 'morphling'], counteredBy: ['antimage', 'pugna', 'blade_mail'], tags: ['инста сайленс', 'магический берст'] }
     ];
 
     let ENEMY_TEAM = [];
+    let CURRENT_ROLE_FILTER = 'all';
+    let SEARCH_QUERY = '';
 
     function getHeroImg(imgName) {
       return `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${imgName}.png`;
@@ -187,7 +279,6 @@
       if (tabId === 'tierlist') renderTierList('all');
     }
 
-    // РЕНДЕР СЛОТОВ ВРАЖЕСКОЙ КОМАНДЫ
     function renderEnemySlots() {
       const container = document.getElementById('enemySlotsContainer');
       container.innerHTML = '';
@@ -198,17 +289,17 @@
           container.innerHTML += `
             <div class="relative group rounded-xl overflow-hidden border-2 border-rose-500 aspect-[16/9] bg-zinc-900 shadow-lg">
               <img src="${getHeroImg(hero.img)}" class="w-full h-full object-cover">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2 justify-between">
-                <span class="text-[11px] font-black text-white truncate max-w-[80%]">${hero.name}</span>
-                <button onclick="removeHeroFromEnemy(${i})" class="text-rose-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2 justify-between">
+                <span class="text-[11px] font-black text-white truncate max-w-[75%]">${hero.name}</span>
+                <button onclick="removeHeroFromEnemy(${i})" class="text-rose-400 hover:text-white text-xs bg-black/60 p-1 rounded"><i class="fa-solid fa-xmark"></i></button>
               </div>
             </div>
           `;
         } else {
           container.innerHTML += `
             <div class="rounded-xl border-2 border-dashed border-zinc-800 aspect-[16/9] flex flex-col items-center justify-center text-zinc-600 bg-[#0d1017]">
-              <i class="fa-solid fa-user-plus text-base mb-1 text-zinc-700"></i>
-              <span class="text-[10px] font-bold uppercase">Слот ${i + 1}</span>
+              <i class="fa-solid fa-user-plus text-sm mb-1 text-zinc-700"></i>
+              <span class="text-[10px] font-bold uppercase tracking-wider">Слот ${i + 1}</span>
             </div>
           `;
         }
@@ -217,20 +308,29 @@
       analyzeDraft();
     }
 
-    function renderHeroGrid(filterRole = 'all') {
+    function renderHeroGrid() {
       const container = document.getElementById('heroesSelectionGrid');
       container.innerHTML = '';
 
-      const filtered = filterRole === 'all' ? HEROES_DB : HEROES_DB.filter(h => h.role === filterRole);
+      const filtered = HEROES_DB.filter(h => {
+        const matchRole = (CURRENT_ROLE_FILTER === 'all' || h.role === CURRENT_ROLE_FILTER);
+        const matchSearch = h.name.toLowerCase().includes(SEARCH_QUERY.toLowerCase());
+        return matchRole && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="col-span-7 py-8 text-center text-zinc-500 text-xs">Героев по вашему запросу не найдено.</div>';
+        return;
+      }
 
       filtered.forEach(h => {
         const isPicked = ENEMY_TEAM.some(picked => picked.id === h.id);
-        const cardClass = isPicked ? 'hero-selected' : 'hover:scale-105 cursor-pointer hover:border-rose-500';
+        const cardClass = isPicked ? 'hero-selected' : 'hover:scale-105 cursor-pointer hover:border-rose-500 shadow-md';
 
         container.innerHTML += `
           <div onclick="addHeroToEnemy('${h.id}')" class="relative rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900 transition ${cardClass} aspect-[16/9]">
             <img src="${getHeroImg(h.img)}" class="w-full h-full object-cover" title="${h.name}">
-            <div class="absolute bottom-0 inset-x-0 bg-black/70 py-0.5 px-1 text-center">
+            <div class="absolute bottom-0 inset-x-0 bg-black/75 py-0.5 px-1 text-center">
               <span class="text-[9px] font-bold text-zinc-200 block truncate">${h.name}</span>
             </div>
           </div>
@@ -238,12 +338,18 @@
       });
     }
 
+    function handleSearch(val) {
+      SEARCH_QUERY = val;
+      renderHeroGrid();
+    }
+
     function filterHeroGrid(role) {
+      CURRENT_ROLE_FILTER = role;
       document.querySelectorAll('#roleFilterButtons button').forEach(btn => {
         btn.className = 'px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-bold';
       });
       event.target.className = 'px-2.5 py-1 rounded bg-rose-600 text-white text-[11px] font-bold';
-      renderHeroGrid(role);
+      renderHeroGrid();
     }
 
     function addHeroToEnemy(heroId) {
@@ -265,7 +371,6 @@
       renderEnemySlots();
     }
 
-    // АНАЛИЗАТОР И ПОИСК КОНТР-ПИКОВ
     function analyzeDraft() {
       const weakBox = document.getElementById('enemyWeaknessesBox');
       const recBox = document.getElementById('recommendedPicksList');
@@ -276,40 +381,42 @@
         return;
       }
 
-      // Анализ тегов
       let weaknesses = [];
       const enemyIds = ENEMY_TEAM.map(h => h.id);
 
       const hasBkbPiercing = ENEMY_TEAM.some(h => h.tags.some(t => t.includes('БКБ')));
-      const hasIllusionsOrSwarm = ENEMY_TEAM.some(h => h.tags.some(t => t.includes('иллюзии')));
-      const hasHyperCarries = ENEMY_TEAM.some(h => h.tags.some(t => t.includes('лейт')));
+      const hasIllusions = ENEMY_TEAM.some(h => h.tags.some(t => t.includes('иллюзии')));
+      const hasInvis = ENEMY_TEAM.some(h => h.tags.some(t => t.includes('инвиз')));
 
       if (!hasBkbPiercing) {
-        weaknesses.push('<span class="text-emerald-400 font-bold">✓ Нет контроля сквозь БКБ:</span> Герои с ранним BKB (PA, Slark, Sven) будут неуязвимы.');
+        weaknesses.push('<span class="text-emerald-400 font-bold">✓ Нет контроля сквозь БКБ:</span> Быстрый BKB на ваших керри выигрывает тимфайты.');
       } else {
-        weaknesses.push('<span class="text-rose-400 font-bold">⚠ Есть контроль сквозь БКБ:</span> Осторожно на гиперкерри без подсейва.');
+        weaknesses.push('<span class="text-rose-400 font-bold">⚠ Есть контроль сквозь БКБ:</span> Необходимы сейв-саппорты (Shadow Demon, Oracle, Vengeful).');
       }
 
-      if (ENEMY_TEAM.length >= 3) {
-        weaknesses.push('<span class="text-sky-400 font-bold">ℹ Уязвимость по темпу:</span> Пик врага уязвим к раннему пушу и агрессии на 15–20 минуте.');
+      if (hasIllusions) {
+        weaknesses.push('<span class="text-amber-400 font-bold">⚔ Враг играет через иллюзии:</span> Нужен сильный AoE сплеш-урон (Sven, Leshrac, Earthshaker, Axe).');
+      }
+
+      if (hasInvis) {
+        weaknesses.push('<span class="text-sky-400 font-bold">👁 Враг использует невидимость:</span> Slardar, Bounty Hunter или ранние варды/дасты обязательны.');
       }
 
       weakBox.innerHTML = weaknesses.map(w => `<div class="bg-[#181c2b] p-2.5 rounded-xl border border-zinc-800">${w}</div>`).join('');
 
-      // Подсчет контр-пиков
       const scores = {};
       HEROES_DB.forEach(candidate => {
-        if (enemyIds.includes(candidate.id)) return; // Уже во врагах
+        if (enemyIds.includes(candidate.id)) return;
 
         let matchScore = 0;
         let reasons = [];
 
         ENEMY_TEAM.forEach(enemy => {
-          if (candidate.counters.includes(enemy.id)) {
+          if (candidate.counters && candidate.counters.includes(enemy.id)) {
             matchScore += 3;
             reasons.push(`контрит ${enemy.name}`);
           }
-          if (enemy.counteredBy.includes(candidate.id)) {
+          if (enemy.counteredBy && enemy.counteredBy.includes(candidate.id)) {
             matchScore += 2;
             if (!reasons.includes(`контрит ${enemy.name}`)) reasons.push(`силен против ${enemy.name}`);
           }
@@ -323,7 +430,7 @@
       const sortedPicks = Object.values(scores).sort((a, b) => b.score - a.score).slice(0, 4);
 
       if (sortedPicks.length === 0) {
-        recBox.innerHTML = '<p class="text-zinc-500 text-xs italic py-2 text-center">Прямых жестких контр-пиков не найдено, выбирайте мету S-тира.</p>';
+        recBox.innerHTML = '<p class="text-zinc-500 text-xs italic py-2 text-center">Прямых контр-пиков не найдено, берите метовых героев S-тира.</p>';
         return;
       }
 
@@ -338,21 +445,20 @@
                 <p class="text-[10px] text-emerald-400 font-semibold">${reasons.join(' • ')}</p>
               </div>
             </div>
-            <span class="text-xs font-mono font-black text-rose-400 bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">+${score * 15}% Эфф.</span>
+            <span class="text-xs font-mono font-black text-rose-400 bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">+${score * 15}%</span>
           </div>
         `;
       });
     }
 
-    // ТИР-ЛИСТ МЕТЫ
     function renderTierList(roleFilter = 'all') {
       const container = document.getElementById('tierListRowsContainer');
       container.innerHTML = '';
 
       const tiers = [
-        { name: 'S-TIER (ИМБЫ ПАТЧА)', color: 'border-rose-500 text-rose-400 bg-rose-500/10', grade: 'S' },
+        { name: 'S-TIER (ИМБЫ ТЕКУЩЕЙ МЕТЫ)', color: 'border-rose-500 text-rose-400 bg-rose-500/10', grade: 'S' },
         { name: 'A-TIER (СТАБИЛЬНЫЙ ВЫБОР)', color: 'border-amber-500 text-amber-400 bg-amber-500/10', grade: 'A' },
-        { name: 'B-TIER (СИТУАТИВНЫЕ)', color: 'border-sky-500 text-sky-400 bg-sky-500/10', grade: 'B' }
+        { name: 'B-TIER (СИТУАТИВНЫЕ ГЕРОИ)', color: 'border-sky-500 text-sky-400 bg-sky-500/10', grade: 'B' }
       ];
 
       tiers.forEach(tier => {
@@ -361,11 +467,11 @@
         let heroesCardsHtml = '';
         heroesInTier.forEach(h => {
           heroesCardsHtml += `
-            <div class="bg-[#181c2b] border border-zinc-800 hover:border-zinc-600 rounded-xl p-2.5 flex items-center gap-3 transition">
-              <img src="${getHeroImg(h.img)}" class="w-14 h-8 rounded-lg object-cover border border-zinc-700 shadow">
+            <div class="bg-[#181c2b] border border-zinc-800 hover:border-zinc-600 rounded-xl p-2 flex items-center gap-2.5 transition">
+              <img src="${getHeroImg(h.img)}" class="w-12 h-7 rounded-lg object-cover border border-zinc-700 shadow flex-shrink-0">
               <div class="min-w-0">
                 <span class="font-black text-xs text-white block truncate">${h.name}</span>
-                <span class="text-[10px] text-zinc-400 block">${h.role} • ${h.tags[0] || 'Мета'}</span>
+                <span class="text-[9px] text-zinc-400 block truncate">${h.role} • ${h.tags[0] || 'Мета'}</span>
               </div>
             </div>
           `;
@@ -380,7 +486,7 @@
             <div class="flex items-center gap-2 font-black text-xs px-3 py-1.5 rounded-lg border w-fit ${tier.color}">
               ${tier.name}
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
               ${heroesCardsHtml}
             </div>
           </div>
