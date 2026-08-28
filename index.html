@@ -9,110 +9,110 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; background-color: #0b0d13; color: #f3f4f6; }
-    .nav-btn-active { color: #ffffff !important; border-bottom: 2px solid #e11d48 !important; }
-    .hero-selected { outline: 2px solid #e11d48; filter: brightness(0.3); pointer-events: none; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    .nav-btn-active { color: #ffffff !important; border-bottom: 3px solid #e11d48 !important; }
+    .hero-selected { outline: 3px solid #e11d48; filter: brightness(0.25); pointer-events: none; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #121520; }
-    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #52525b; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
   <!-- ШАПКА -->
   <header class="bg-[#121520] border-b border-zinc-800 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center gap-8">
-        <div onclick="switchTab('draft')" class="flex items-center gap-2 cursor-pointer">
-          <div class="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-rose-600/30">ML</div>
-          <span class="font-black text-sm tracking-wider text-white">META LAB</span>
+        <div onclick="switchTab('draft')" class="flex items-center gap-3 cursor-pointer">
+          <div class="w-10 h-10 rounded-xl bg-rose-600 flex items-center justify-center text-white font-black text-base shadow-lg shadow-rose-600/30">ML</div>
+          <span class="font-black text-base tracking-wider text-white">META LAB</span>
         </div>
 
-        <nav class="flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
-          <button onclick="switchTab('draft')" id="nav-draft" class="nav-btn-active py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
+        <nav class="flex items-center gap-6 text-sm font-bold uppercase tracking-wider">
+          <button onclick="switchTab('draft')" id="nav-draft" class="nav-btn-active py-5 text-zinc-400 hover:text-white transition flex items-center gap-2">
             <i class="fa-solid fa-crosshairs"></i> Контр-пикер
           </button>
-          <button onclick="switchTab('tierlist')" id="nav-tierlist" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
+          <button onclick="switchTab('tierlist')" id="nav-tierlist" class="py-5 text-zinc-400 hover:text-white transition flex items-center gap-2">
             <i class="fa-solid fa-layer-group"></i> Тир-лист по атрибутам
           </button>
         </nav>
       </div>
 
       <div class="flex items-center gap-3">
-        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-          <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1.5 animate-pulse"></span> 127 Heroes (4 Attributes)
+        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+          <span class="w-2 h-2 rounded-full bg-rose-400 mr-2 animate-pulse"></span> 127 Heroes Active
         </span>
       </div>
     </div>
   </header>
 
   <!-- КОНТЕНТ -->
-  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
 
     <!-- РАЗДЕЛ 1: КОНТР-ПИКЕР -->
-    <section id="tab-draft" class="space-y-6">
+    <section id="tab-draft" class="space-y-8">
       
       <!-- СЛОТЫ ВРАГА -->
-      <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+      <div class="bg-[#121520] border border-zinc-800 rounded-3xl p-6 shadow-2xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h2 class="text-base font-black text-white flex items-center gap-2">
+            <h2 class="text-lg font-black text-white flex items-center gap-2.5">
               <i class="fa-solid fa-shield-halved text-rose-500"></i> ВЫБЕРИТЕ 5 ГЕРОЕВ ВРАГА
             </h2>
-            <p class="text-xs text-zinc-400">Нажмите на героя из каталога ниже, чтобы добавить в драфт</p>
+            <p class="text-sm text-zinc-400">Нажмите на героя из каталога ниже, чтобы добавить в драфт</p>
           </div>
-          <button onclick="clearDraft()" class="text-xs font-bold text-zinc-400 hover:text-rose-400 flex items-center gap-1.5 bg-zinc-800/80 hover:bg-zinc-800 px-3 py-1.5 rounded-lg border border-zinc-700/50 transition">
+          <button onclick="clearDraft()" class="text-xs font-bold text-zinc-300 hover:text-rose-400 flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-xl border border-zinc-700 transition shadow">
             <i class="fa-solid fa-rotate-left"></i> Сбросить драфт
           </button>
         </div>
 
-        <div id="enemySlotsContainer" class="grid grid-cols-5 gap-3 sm:gap-4"></div>
+        <div id="enemySlotsContainer" class="grid grid-cols-5 gap-4"></div>
       </div>
 
       <!-- КАТАЛОГ + АНАЛИТИКА -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <!-- Сетка героев с фильтрами по 4 атрибутам -->
-        <div class="lg:col-span-7 bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl space-y-4">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-zinc-800 pb-3">
-            <div class="relative w-full sm:w-44">
-              <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-zinc-500 text-xs"></i>
-              <input type="text" id="heroSearchInput" oninput="handleSearch(this.value)" placeholder="Поиск героя..." class="w-full bg-[#181c2b] border border-zinc-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500">
+        <!-- Сетка героев с увеличенными иконками -->
+        <div class="lg:col-span-7 bg-[#121520] border border-zinc-800 rounded-3xl p-6 shadow-2xl space-y-5">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-zinc-800/80 pb-4">
+            <div class="relative w-full sm:w-56">
+              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-zinc-400 text-sm"></i>
+              <input type="text" id="heroSearchInput" oninput="handleSearch(this.value)" placeholder="Поиск героя..." class="w-full bg-[#181c2b] border border-zinc-700 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500">
             </div>
 
-            <!-- Фильтр по атрибутам -->
-            <div class="flex flex-wrap items-center gap-1" id="attrFilterButtons">
-              <button onclick="filterHeroGrid('all')" class="px-2 py-1 rounded bg-rose-600 text-white text-[10px] font-bold">Все (127)</button>
-              <button onclick="filterHeroGrid('str')" class="px-2 py-1 rounded bg-zinc-800 hover:bg-red-950 text-red-400 border border-red-500/20 text-[10px] font-bold">🔴 Сила</button>
-              <button onclick="filterHeroGrid('agi')" class="px-2 py-1 rounded bg-zinc-800 hover:bg-emerald-950 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">🟢 Ловкость</button>
-              <button onclick="filterHeroGrid('int')" class="px-2 py-1 rounded bg-zinc-800 hover:bg-sky-950 text-sky-400 border border-sky-500/20 text-[10px] font-bold">🔵 Интеллект</button>
-              <button onclick="filterHeroGrid('uni')" class="px-2 py-1 rounded bg-zinc-800 hover:bg-purple-950 text-purple-400 border border-purple-500/20 text-[10px] font-bold">🟣 Универсал</button>
+            <!-- Фильтр по 4 атрибутам -->
+            <div class="flex flex-wrap items-center gap-1.5" id="attrFilterButtons">
+              <button onclick="filterHeroGrid('all')" class="px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold transition">Все (127)</button>
+              <button onclick="filterHeroGrid('str')" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-red-950/60 text-red-400 border border-red-500/30 text-xs font-bold transition">🔴 Сила</button>
+              <button onclick="filterHeroGrid('agi')" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition">🟢 Ловкость</button>
+              <button onclick="filterHeroGrid('int')" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-sky-950/60 text-sky-400 border border-sky-500/30 text-xs font-bold transition">🔵 Интеллект</button>
+              <button onclick="filterHeroGrid('uni')" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-purple-950/60 text-purple-400 border border-purple-500/30 text-xs font-bold transition">🟣 Универсал</button>
             </div>
           </div>
 
-          <div id="heroesSelectionGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-7 gap-2 max-h-[520px] overflow-y-auto pr-1"></div>
+          <div id="heroesSelectionGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3.5 max-h-[620px] overflow-y-auto pr-2"></div>
         </div>
 
         <!-- Аналитика и Контр-пики -->
-        <div class="lg:col-span-5 space-y-4">
+        <div class="lg:col-span-5 space-y-5">
           
           <!-- Анализ слабостей -->
-          <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl space-y-3">
-            <h3 class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
-              <i class="fa-solid fa-chart-pie text-amber-400"></i> Анализ драфта врага
+          <div class="bg-[#121520] border border-zinc-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <h3 class="text-sm font-black uppercase tracking-wider text-white flex items-center gap-2.5">
+              <i class="fa-solid fa-chart-pie text-amber-400 text-base"></i> Анализ драфта врага
             </h3>
-            <div id="enemyWeaknessesBox" class="space-y-2 text-xs">
-              <p class="text-zinc-500 italic py-2 text-center">Выберите героев врага для анализа уязвимостей.</p>
+            <div id="enemyWeaknessesBox" class="space-y-3 text-sm">
+              <p class="text-zinc-500 italic py-4 text-center">Выберите героев врага для анализа уязвимостей.</p>
             </div>
           </div>
 
-          <!-- Контр-пики -->
-          <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl space-y-3">
-            <h3 class="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
-              <i class="fa-solid fa-star text-emerald-400"></i> Рекомендуемые контр-пики
+          <!-- Рекомендуемые контр-пики -->
+          <div class="bg-[#121520] border border-zinc-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <h3 class="text-sm font-black uppercase tracking-wider text-white flex items-center gap-2.5">
+              <i class="fa-solid fa-star text-emerald-400 text-base"></i> Рекомендуемые контр-пики
             </h3>
-            <div id="recommendedPicksList" class="space-y-2.5">
-              <p class="text-zinc-500 text-xs italic py-2 text-center">Контр-пики рассчитаются автоматически.</p>
+            <div id="recommendedPicksList" class="space-y-3">
+              <p class="text-zinc-500 text-sm italic py-4 text-center">Контр-пики рассчитаются автоматически.</p>
             </div>
           </div>
 
@@ -123,34 +123,33 @@
 
     <!-- РАЗДЕЛ 2: ТИР-ЛИСТ ПО АТРИБУТАМ -->
     <section id="tab-tierlist" class="hidden space-y-6">
-      <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="bg-[#121520] border border-zinc-800 rounded-3xl p-6 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 class="text-base font-black text-white flex items-center gap-2">
+          <h2 class="text-lg font-black text-white flex items-center gap-2.5">
             <i class="fa-solid fa-ranking-star text-amber-400"></i> ТИР-ЛИСТ 127 ГЕРОЕВ DOTA 2
           </h2>
-          <p class="text-xs text-zinc-400">Сгруппировано по силе (S/A/B) и атрибутам (Сила, Ловкость, Интеллект, Универсал)</p>
+          <p class="text-sm text-zinc-400">Рейтинг силы персонажей по 4 атрибутам</p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-1.5 bg-[#181c2b] p-1.5 rounded-xl border border-zinc-700/50 text-xs font-bold" id="tierAttrFilter">
-          <button onclick="renderTierList('all')" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white">Все (127)</button>
-          <button onclick="renderTierList('str')" class="px-2.5 py-1 rounded-lg text-red-400 hover:bg-zinc-800">Сила</button>
-          <button onclick="renderTierList('agi')" class="px-2.5 py-1 rounded-lg text-emerald-400 hover:bg-zinc-800">Ловкость</button>
-          <button onclick="renderTierList('int')" class="px-2.5 py-1 rounded-lg text-sky-400 hover:bg-zinc-800">Интеллект</button>
-          <button onclick="renderTierList('uni')" class="px-2.5 py-1 rounded-lg text-purple-400 hover:bg-zinc-800">Универсал</button>
+        <div class="flex flex-wrap items-center gap-2 bg-[#181c2b] p-1.5 rounded-2xl border border-zinc-700/60 text-xs font-bold" id="tierAttrFilter">
+          <button onclick="renderTierList('all')" class="px-3.5 py-2 rounded-xl bg-rose-600 text-white">Все (127)</button>
+          <button onclick="renderTierList('str')" class="px-3.5 py-2 rounded-xl text-red-400 hover:bg-zinc-800">Сила</button>
+          <button onclick="renderTierList('agi')" class="px-3.5 py-2 rounded-xl text-emerald-400 hover:bg-zinc-800">Ловкость</button>
+          <button onclick="renderTierList('int')" class="px-3.5 py-2 rounded-xl text-sky-400 hover:bg-zinc-800">Интеллект</button>
+          <button onclick="renderTierList('uni')" class="px-3.5 py-2 rounded-xl text-purple-400 hover:bg-zinc-800">Универсал</button>
         </div>
       </div>
 
-      <div id="tierListRowsContainer" class="space-y-4"></div>
+      <div id="tierListRowsContainer" class="space-y-6"></div>
     </section>
 
   </main>
 
-  <footer class="border-t border-zinc-900 bg-[#07080d] py-5 text-center text-xs text-zinc-600">
-    <p>© 2026 DOTA META LAB • 127 Valve Heroes CDN Integration</p>
+  <footer class="border-t border-zinc-900 bg-[#07080d] py-6 text-center text-xs text-zinc-500 font-medium">
+    <p>© 2026 DOTA META LAB • High Resolution Valve Assets</p>
   </footer>
 
   <script>
-    // ПОЛНЫЙ КАТАЛОГ: РОВНО 127 ГЕРОЕВ ПО 4 АТРИБУТАМ
     const HEROES_DB = [
       // 1. СИЛА (STRENGTH)
       { id: 'alchemist', name: 'Alchemist', attr: 'str', tier: 'A', img: 'alchemist', counters: ['phantom_lancer', 'naga_siren'], counteredBy: ['ancient_apparition', 'slark', 'ursa'], tags: ['быстрый фарм', 'реген'] },
@@ -312,19 +311,19 @@
         const hero = ENEMY_TEAM[i];
         if (hero) {
           container.innerHTML += `
-            <div class="relative group rounded-xl overflow-hidden border-2 border-rose-500 aspect-[16/9] bg-zinc-900 shadow-lg">
+            <div class="relative group rounded-2xl overflow-hidden border-2 border-rose-500 aspect-[16/10] bg-zinc-900 shadow-xl">
               <img src="${getHeroImg(hero.img)}" class="w-full h-full object-cover">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2 justify-between">
-                <span class="text-[11px] font-black text-white truncate max-w-[75%]">${hero.name}</span>
-                <button onclick="removeHeroFromEnemy(${i})" class="text-rose-400 hover:text-white text-xs bg-black/60 p-1 rounded"><i class="fa-solid fa-xmark"></i></button>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-transparent to-transparent flex items-end p-3 justify-between">
+                <span class="text-xs sm:text-sm font-black text-white truncate max-w-[75%]">${hero.name}</span>
+                <button onclick="removeHeroFromEnemy(${i})" class="text-rose-400 hover:text-white text-sm bg-black/80 px-2 py-1 rounded-lg transition"><i class="fa-solid fa-xmark"></i></button>
               </div>
             </div>
           `;
         } else {
           container.innerHTML += `
-            <div class="rounded-xl border-2 border-dashed border-zinc-800 aspect-[16/9] flex flex-col items-center justify-center text-zinc-600 bg-[#0d1017]">
-              <i class="fa-solid fa-user-plus text-sm mb-1 text-zinc-700"></i>
-              <span class="text-[10px] font-bold uppercase tracking-wider">Слот ${i + 1}</span>
+            <div class="rounded-2xl border-2 border-dashed border-zinc-800 aspect-[16/10] flex flex-col items-center justify-center text-zinc-600 bg-[#0d1017]">
+              <i class="fa-solid fa-user-plus text-lg mb-2 text-zinc-600"></i>
+              <span class="text-xs font-bold uppercase tracking-wider">Слот ${i + 1}</span>
             </div>
           `;
         }
@@ -344,19 +343,19 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div class="col-span-7 py-8 text-center text-zinc-500 text-xs">Героев по запросу не найдено.</div>';
+        container.innerHTML = '<div class="col-span-5 py-12 text-center text-zinc-500 text-sm font-medium">Героев по запросу не найдено.</div>';
         return;
       }
 
       filtered.forEach(h => {
         const isPicked = ENEMY_TEAM.some(picked => picked.id === h.id);
-        const cardClass = isPicked ? 'hero-selected' : 'hover:scale-105 cursor-pointer hover:border-rose-500 shadow-md';
+        const cardClass = isPicked ? 'hero-selected' : 'hover:scale-105 cursor-pointer hover:border-rose-500 shadow-lg';
 
         container.innerHTML += `
-          <div onclick="addHeroToEnemy('${h.id}')" class="relative rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900 transition ${cardClass} aspect-[16/9]">
-            <img src="${getHeroImg(h.img)}" class="w-full h-full object-cover" title="${h.name}">
-            <div class="absolute bottom-0 inset-x-0 bg-black/75 py-0.5 px-1 text-center">
-              <span class="text-[9px] font-bold text-zinc-200 block truncate">${h.name}</span>
+          <div onclick="addHeroToEnemy('${h.id}')" class="relative rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900 transition duration-200 ${cardClass} aspect-[16/10] group">
+            <img src="${getHeroImg(h.img)}" class="w-full h-full object-cover group-hover:brightness-110" title="${h.name}">
+            <div class="absolute bottom-0 inset-x-0 bg-black/85 py-1 px-1.5 text-center border-t border-white/5">
+              <span class="text-[11px] sm:text-xs font-black text-zinc-100 block truncate tracking-wide">${h.name}</span>
             </div>
           </div>
         `;
@@ -371,9 +370,9 @@
     function filterHeroGrid(attr) {
       CURRENT_ATTR_FILTER = attr;
       document.querySelectorAll('#attrFilterButtons button').forEach(btn => {
-        btn.className = 'px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] font-bold';
+        btn.className = 'px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold transition';
       });
-      event.target.className = 'px-2 py-1 rounded bg-rose-600 text-white text-[10px] font-bold';
+      event.target.className = 'px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold transition';
       renderHeroGrid();
     }
 
@@ -401,8 +400,8 @@
       const recBox = document.getElementById('recommendedPicksList');
 
       if (ENEMY_TEAM.length === 0) {
-        weakBox.innerHTML = '<p class="text-zinc-500 italic py-2 text-center">Выберите героев врага для анализа уязвимостей.</p>';
-        recBox.innerHTML = '<p class="text-zinc-500 text-xs italic py-2 text-center">Контр-пики рассчитаются автоматически.</p>';
+        weakBox.innerHTML = '<p class="text-zinc-500 italic py-4 text-center">Выберите героев врага для анализа уязвимостей.</p>';
+        recBox.innerHTML = '<p class="text-zinc-500 text-sm italic py-4 text-center">Контр-пики рассчитаются автоматически.</p>';
         return;
       }
 
@@ -414,20 +413,20 @@
       const hasInvis = ENEMY_TEAM.some(h => h.tags.some(t => t.includes('инвиз')));
 
       if (!hasBkbPiercing) {
-        weaknesses.push('<span class="text-emerald-400 font-bold">✓ Нет контроля сквозь БКБ:</span> Быстрый BKB на ваших керри выигрывает тимфайты.');
+        weaknesses.push('<span class="text-emerald-400 font-bold">✓ Нет контроля сквозь БКБ:</span> Ранний BKB на ваших корах выигрывает ключевые драки.');
       } else {
-        weaknesses.push('<span class="text-rose-400 font-bold">⚠ Есть контроль сквозь БКБ:</span> Необходимы сейв-саппорты (Shadow Demon, Oracle, Vengeful).');
+        weaknesses.push('<span class="text-rose-400 font-bold">⚠ Есть контроль сквозь БКБ:</span> Обязательны подсейв-герои (Shadow Demon, Oracle, Vengeful).');
       }
 
       if (hasIllusions) {
-        weaknesses.push('<span class="text-amber-400 font-bold">⚔ Враг играет через иллюзии:</span> Нужен сильный AoE сплеш-урон (Sven, Leshrac, Earthshaker, Axe).');
+        weaknesses.push('<span class="text-amber-400 font-bold">⚔ Враг играет через иллюзии:</span> Нужен плотный AoE сплеш-урон (Sven, Leshrac, Earthshaker, Axe).');
       }
 
       if (hasInvis) {
-        weaknesses.push('<span class="text-sky-400 font-bold">👁 Враг использует невидимость:</span> Slardar, Bounty Hunter или ранние варды/дасты обязательны.');
+        weaknesses.push('<span class="text-sky-400 font-bold">👁 Враг использует невидимость:</span> Slardar, Bounty Hunter или ранний вижн/дасты обязательны.');
       }
 
-      weakBox.innerHTML = weaknesses.map(w => `<div class="bg-[#181c2b] p-2.5 rounded-xl border border-zinc-800">${w}</div>`).join('');
+      weakBox.innerHTML = weaknesses.map(w => `<div class="bg-[#181c2b] p-3.5 rounded-2xl border border-zinc-800 leading-relaxed">${w}</div>`).join('');
 
       const scores = {};
       HEROES_DB.forEach(candidate => {
@@ -455,22 +454,22 @@
       const sortedPicks = Object.values(scores).sort((a, b) => b.score - a.score).slice(0, 4);
 
       if (sortedPicks.length === 0) {
-        recBox.innerHTML = '<p class="text-zinc-500 text-xs italic py-2 text-center">Прямых контр-пиков не найдено, берите метовых героев S-тира.</p>';
+        recBox.innerHTML = '<p class="text-zinc-500 text-sm italic py-4 text-center">Прямых контр-пиков не найдено, берите метовых героев S-тира.</p>';
         return;
       }
 
       recBox.innerHTML = '';
       sortedPicks.forEach(({ hero, score, reasons }) => {
         recBox.innerHTML += `
-          <div class="bg-[#181c2b] border border-zinc-800 p-3 rounded-xl flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-              <img src="${getHeroImg(hero.img)}" class="w-12 h-7 rounded object-cover border border-zinc-700">
+          <div class="bg-[#181c2b] border border-zinc-800 p-4 rounded-2xl flex items-center justify-between gap-4 shadow-lg hover:border-zinc-700 transition">
+            <div class="flex items-center gap-4">
+              <img src="${getHeroImg(hero.img)}" class="w-16 h-10 rounded-xl object-cover border border-zinc-700 shadow flex-shrink-0">
               <div>
-                <h4 class="font-black text-xs text-white">${hero.name} <span class="text-[10px] text-zinc-400 font-medium font-mono uppercase">(${hero.attr})</span></h4>
-                <p class="text-[10px] text-emerald-400 font-semibold">${reasons.join(' • ')}</p>
+                <h4 class="font-black text-sm text-white">${hero.name} <span class="text-xs text-zinc-400 font-medium font-mono uppercase">(${hero.attr})</span></h4>
+                <p class="text-xs text-emerald-400 font-semibold mt-0.5">${reasons.join(' • ')}</p>
               </div>
             </div>
-            <span class="text-xs font-mono font-black text-rose-400 bg-rose-500/10 px-2 py-1 rounded border border-rose-500/20">+${score * 15}%</span>
+            <span class="text-xs font-mono font-black text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-xl border border-rose-500/20 flex-shrink-0">+${score * 15}%</span>
           </div>
         `;
       });
@@ -492,26 +491,26 @@
         let heroesCardsHtml = '';
         heroesInTier.forEach(h => {
           heroesCardsHtml += `
-            <div class="bg-[#181c2b] border border-zinc-800 hover:border-zinc-600 rounded-xl p-2 flex items-center gap-2.5 transition">
-              <img src="${getHeroImg(h.img)}" class="w-12 h-7 rounded-lg object-cover border border-zinc-700 shadow flex-shrink-0">
+            <div class="bg-[#181c2b] border border-zinc-800 hover:border-zinc-600 rounded-2xl p-3 flex items-center gap-3.5 transition shadow">
+              <img src="${getHeroImg(h.img)}" class="w-16 h-10 rounded-xl object-cover border border-zinc-700 shadow flex-shrink-0">
               <div class="min-w-0">
-                <span class="font-black text-xs text-white block truncate">${h.name}</span>
-                <span class="text-[9px] text-zinc-400 block truncate uppercase font-mono">${h.attr} • ${h.tags[0] || 'Мета'}</span>
+                <span class="font-black text-sm text-white block truncate">${h.name}</span>
+                <span class="text-xs text-zinc-400 block truncate uppercase font-mono mt-0.5">${h.attr} • ${h.tags[0] || 'Мета'}</span>
               </div>
             </div>
           `;
         });
 
         if (heroesInTier.length === 0) {
-          heroesCardsHtml = '<div class="col-span-5 text-xs text-zinc-500 py-3 italic">В этой категории нет героев для выбранного фильтра.</div>';
+          heroesCardsHtml = '<div class="col-span-4 text-sm text-zinc-500 py-4 italic">В этой категории нет героев для выбранного фильтра.</div>';
         }
 
         container.innerHTML += `
-          <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-4 shadow-xl space-y-3">
-            <div class="flex items-center gap-2 font-black text-xs px-3 py-1.5 rounded-lg border w-fit ${tier.color}">
+          <div class="bg-[#121520] border border-zinc-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div class="flex items-center gap-2 font-black text-xs sm:text-sm px-4 py-2 rounded-xl border w-fit ${tier.color}">
               ${tier.name}
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
               ${heroesCardsHtml}
             </div>
           </div>
