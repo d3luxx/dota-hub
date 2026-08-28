@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="referrer" content="no-referrer">
   <title>DOTA HUB — Live Esports Database</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -37,7 +36,7 @@
 
       <div class="flex items-center gap-3">
         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Supabase Connected
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Proxy Connected
         </span>
       </div>
     </div>
@@ -221,7 +220,7 @@
   </main>
 
   <footer class="border-t border-zinc-900 bg-[#07080d] py-5 text-center text-xs text-zinc-600">
-    <p>© 2026 DOTA HUB • Live Supabase Database</p>
+    <p>© 2026 DOTA HUB • Live Database</p>
   </footer>
 
   <script>
@@ -234,19 +233,28 @@
     let PLAYERS_CACHE = [];
     let CURRENT_SELECTED_TEAM = null;
 
+    // Автоматический обход CORS-блокировок
+    function fixImgUrl(url) {
+      if (!url) return '';
+      if (url.startsWith('http')) {
+        return `https://wsrv.nl/?url=${encodeURIComponent(url)}`;
+      }
+      return url;
+    }
+
     function getTeamLogoHtml(team) {
       if (team.name?.toLowerCase().includes('parivision') || team.id === 'parivision') {
-        return `<img src="parivision.png" referrerpolicy="no-referrer" class="w-full h-full object-contain">`;
+        return `<img src="parivision.png" class="w-full h-full object-contain">`;
       }
-      if (team.logo_url && team.logo_url.startsWith('http')) {
-        return `<img src="${team.logo_url}" referrerpolicy="no-referrer" class="w-full h-full object-contain" onerror="this.outerHTML='<span class=\\'font-black text-white text-xs\\'>${team.tag || team.name.substring(0,2)}</span>'">`;
+      if (team.logo_url) {
+        return `<img src="${fixImgUrl(team.logo_url)}" class="w-full h-full object-contain" onerror="this.outerHTML='<span class=\\'font-black text-white text-xs\\'>${team.tag || 'TEAM'}</span>'">`;
       }
-      return `<span class="font-black text-white text-xs">${team.tag || team.name.substring(0,2)}</span>`;
+      return `<span class="font-black text-white text-xs">${team.tag || 'TEAM'}</span>`;
     }
 
     function getPlayerAvatar(p) {
-      if (p.photo_url && p.photo_url.length > 0) {
-        return `<img src="${p.photo_url}" referrerpolicy="no-referrer" class="w-full h-full object-cover object-top" onerror="this.outerHTML=getGeneratedCard('${p.nick}', 'Pos ${p.pos}')">`;
+      if (p.photo_url) {
+        return `<img src="${fixImgUrl(p.photo_url)}" class="w-full h-full object-cover object-top" onerror="this.outerHTML=getGeneratedCard('${p.nick}', 'Pos ${p.pos}')">`;
       }
       return getGeneratedCard(p.nick, `Pos ${p.pos}`);
     }
