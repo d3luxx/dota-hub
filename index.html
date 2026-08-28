@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DOTA HUB — Киберспортивный портал</title>
+  <title>DOTA HUB — Live Database Platform</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -14,10 +15,9 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
-  <!-- ПОЛНОЕ ВЕРХНЕЕ МЕНЮ (НИЧЕГО НЕ ПРОПАДАЕТ) -->
+  <!-- ШАПКА -->
   <header class="bg-[#121520] border-b border-zinc-800 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-      
       <div class="flex items-center gap-8">
         <div onclick="navigate('teams-ranking')" class="flex items-center gap-2 cursor-pointer">
           <div class="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-rose-600/30">DH</div>
@@ -25,61 +25,53 @@
         </div>
 
         <nav class="flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
-          <button onclick="navigate('home')" id="nav-home" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-house"></i> Главная
-          </button>
           <button onclick="navigate('teams-ranking')" id="nav-teams-ranking" class="nav-btn-active py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
             <i class="fa-solid fa-shield"></i> Рейтинг команд
           </button>
           <button onclick="navigate('pro-players')" id="nav-pro-players" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-user"></i> Про-игроки
-          </button>
-          <button onclick="navigate('tournaments')" id="nav-tournaments" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-trophy"></i> Турниры
+            <i class="fa-solid fa-user"></i> База игроков
           </button>
         </nav>
       </div>
 
-      <!-- Поиск по командам -->
-      <div class="relative">
-        <input id="searchInput" onkeyup="filterTeams(this.value)" type="text" placeholder="Поиск команды..." 
-               class="bg-zinc-900 border border-zinc-700/80 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500 w-44 sm:w-56">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Supabase Connected
+        </span>
       </div>
-
     </div>
   </header>
 
-  <!-- КОНТЕНТНАЯ ОБЛАСТЬ -->
+  <!-- КОНТЕНТ -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-    <!-- 1. ГЛАВНАЯ СТРАНИЦА -->
-    <section id="page-home" class="hidden space-y-4">
-      <div class="bg-gradient-to-r from-rose-950/40 via-[#121520] to-[#121520] border border-rose-500/20 rounded-2xl p-6 shadow-xl">
-        <span class="bg-rose-600 text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">Сезон 2026</span>
-        <h1 class="text-2xl font-black text-white mt-2">DOTA HUB — Киберспортивный портал</h1>
-        <p class="text-xs text-zinc-400 mt-1">Мировые рейтинги, подтвержденные составы 5x5 и статистика игроков.</p>
-      </div>
-    </section>
+    <!-- ИНДИКАТОР ЗАГРУЗКИ -->
+    <div id="loadingIndicator" class="text-center py-12 text-zinc-400">
+      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-rose-500 mb-3"></i>
+      <p class="text-xs font-medium">Синхронизация с базой данных Supabase...</p>
+    </div>
 
-    <!-- 2. МИРОВОЙ РЕЙТИНГ КОМАНД -->
-    <section id="page-teams-ranking" class="space-y-4">
-      <div class="border-b border-zinc-800 pb-3">
-        <h1 class="text-xl font-black text-white flex items-center gap-2">
-          <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
-        </h1>
-        <p class="text-xs text-zinc-400">Мировой рейтинг профессиональных клубов (нажмите на команду для просмотра ростера)</p>
+    <!-- 1. ТАБЛИЦА РЕЙТИНГА КОМАНД -->
+    <section id="page-teams-ranking" class="hidden space-y-4">
+      <div class="border-b border-zinc-800 pb-3 flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
+          </h1>
+          <p class="text-xs text-zinc-400">Данные подгружаются из PostgreSQL таблицы public.teams</p>
+        </div>
       </div>
 
       <div class="bg-[#121520] border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
         <table class="w-full text-left border-collapse text-xs">
           <thead>
             <tr class="bg-[#181c2b] text-zinc-400 uppercase text-[10px] font-bold border-b border-zinc-800">
-              <th class="py-3 px-4 w-16">Rank</th>
-              <th class="py-3 px-4">Team name</th>
-              <th class="py-3 px-3 text-center">Rating</th>
-              <th class="py-3 px-3 text-center">Region</th>
-              <th class="py-3 px-3 text-center">Games</th>
-              <th class="py-3 px-4 text-right">Win (%)</th>
+              <th class="py-3.5 px-4 w-16">Rank</th>
+              <th class="py-3.5 px-4">Team name</th>
+              <th class="py-3.5 px-3 text-center">Rating</th>
+              <th class="py-3.5 px-3 text-center">Region</th>
+              <th class="py-3.5 px-3 text-center">Games</th>
+              <th class="py-3.5 px-4 text-right">Win (%)</th>
             </tr>
           </thead>
           <tbody id="teamsTableBody" class="divide-y divide-zinc-800/60"></tbody>
@@ -87,7 +79,7 @@
       </div>
     </section>
 
-    <!-- 3. СТРАНИЦА КОМАНДЫ (PARIVISION И ДРУГИЕ) -->
+    <!-- 2. СТРАНИЦА КОМАНДЫ (ROSTER 5X5 ИЗ SUPABASE) -->
     <section id="page-team-details" class="hidden space-y-6">
       <button onclick="navigate('teams-ranking')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
         <i class="fa-solid fa-arrow-left"></i> Назад к рейтингу команд
@@ -96,9 +88,8 @@
       <!-- Шапка команды -->
       <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-6 shadow-xl">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          
           <div class="lg:col-span-4 flex items-center gap-5">
-            <div id="teamLogoWrap" class="w-24 h-24 rounded-2xl bg-[#181c2b] border border-zinc-700 p-2 flex items-center justify-center flex-shrink-0 shadow-lg"></div>
+            <div id="teamLogoWrap" class="w-20 h-20 rounded-2xl bg-zinc-900 border border-zinc-700 p-2 flex items-center justify-center flex-shrink-0 shadow-lg"></div>
             <div>
               <h2 id="teamHeaderName" class="text-2xl font-black text-white"></h2>
               <div class="flex items-center gap-2 mt-1">
@@ -114,16 +105,8 @@
               <span id="teamMapsPlayed" class="font-bold text-zinc-200"></span>
             </div>
             <div>
-              <span class="text-zinc-500 block text-[11px]">Events:</span>
-              <span class="font-bold text-zinc-200">35</span>
-            </div>
-            <div>
               <span class="text-zinc-500 block text-[11px]">Prize money:</span>
               <span id="teamPrizeTotal" class="font-bold text-emerald-400 font-mono text-sm"></span>
-            </div>
-            <div>
-              <span class="text-zinc-500 block text-[11px]">Rating:</span>
-              <span id="teamRatingScore" class="font-mono font-bold text-rose-400"></span>
             </div>
           </div>
 
@@ -136,9 +119,7 @@
               <div id="teamWinBar" class="bg-emerald-500 h-full"></div>
               <div id="teamLossBar" class="bg-rose-500 h-full"></div>
             </div>
-            <div class="text-right text-xs font-black text-emerald-400" id="teamWinPctText"></div>
           </div>
-
         </div>
       </div>
 
@@ -151,104 +132,71 @@
       </div>
     </section>
 
-    <!-- 4. ПРО-ИГРОКИ -->
+    <!-- 3. БАЗА ИГРОКОВ -->
     <section id="page-pro-players" class="hidden space-y-4">
       <div class="border-b border-zinc-800 pb-3">
-        <h2 class="text-xl font-black text-white">Каталог игроков</h2>
+        <h2 class="text-xl font-black text-white">Каталог игроков из Supabase</h2>
       </div>
       <div id="proPlayersCatalog" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
-    </section>
-
-    <!-- 5. ТУРНИРЫ -->
-    <section id="page-tournaments" class="hidden space-y-4">
-      <div class="border-b border-zinc-800 pb-3">
-        <h2 class="text-xl font-black text-white">Главные турниры года</h2>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-[#121520] border border-zinc-800 p-5 rounded-2xl shadow-lg">
-          <span class="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">Tier 1</span>
-          <h3 class="font-black text-base text-white mt-2">The International 2026</h3>
-          <p class="text-xs text-zinc-400 mt-1">Сентябрь 2026 • Европа</p>
-          <div class="mt-4 pt-3 border-t border-zinc-800 text-xs text-emerald-400 font-mono font-bold">$3 500 000+</div>
-        </div>
-        <div class="bg-[#121520] border border-zinc-800 p-5 rounded-2xl shadow-lg">
-          <span class="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">Tier 1</span>
-          <h3 class="font-black text-base text-white mt-2">Riyadh Masters 2026</h3>
-          <p class="text-xs text-zinc-400 mt-1">Июль 2026 • Эр-Рияд 🇸🇦</p>
-          <div class="mt-4 pt-3 border-t border-zinc-800 text-xs text-emerald-400 font-mono font-bold">$5 000 000</div>
-        </div>
-      </div>
     </section>
 
   </main>
 
   <footer class="border-t border-zinc-900 bg-[#07080d] py-5 text-center text-xs text-zinc-600">
-    <p>© 2026 DOTA HUB • Портал аналитики Dota 2</p>
+    <p>© 2026 DOTA HUB • Подключено к облачной базе Supabase (PostgreSQL)</p>
   </footer>
 
   <script>
-    // Векторный логотип PARIVISION
-    const LOGO_PARIVISION = `<svg viewBox="0 0 100 100" class="w-14 h-14"><rect width="100" height="100" rx="20" fill="#141722"/><path d="M28 28 L50 50 L28 72 M72 28 L50 50 L72 72" stroke="#10b981" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    // ПАРАМЕТРЫ ПОДКЛЮЧЕНИЯ К ВАШЕЙ БАЗЕ SUPABASE
+    const SUPABASE_URL = 'https://waybpnkztszkldlwxuge.supabase.co';
+    // Вставьте сюда скопированный Publishable ключ:
+    const SUPABASE_KEY = 'sb_publishable_-G2uSAT4Hps3rEzaWWNeiQ_QBvkYl8C';
 
-    // Векторные портреты киберспортсменов
-    function createPlayerAvatar(initials, bgGradient) {
-      return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${bgGradient[0]}"/><stop offset="100%" stop-color="${bgGradient[1]}"/></linearGradient></defs><rect width="300" height="300" fill="url(%23g)"/><circle cx="150" cy="115" r="55" fill="%23ffffff" opacity="0.9"/><path d="M70 260 C70 190 230 190 230 260 Z" fill="%23ffffff" opacity="0.9"/><text x="150" y="285" font-family="Arial, sans-serif" font-weight="900" font-size="28" fill="%23ffffff" text-anchor="middle">${initials}</text></svg>`;
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let TEAMS_CACHE = [];
+    let PLAYERS_CACHE = [];
+
+    // Генерация аватаров
+    function getPlayerAvatarSvg(initials, c1 = "#059669", c2 = "#047857") {
+      return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${encodeURIComponent(c1)}"/><stop offset="100%" stop-color="${encodeURIComponent(c2)}"/></linearGradient></defs><rect width="300" height="300" fill="url(%23g)"/><circle cx="150" cy="115" r="55" fill="%23ffffff" opacity="0.9"/><path d="M70 260 C70 190 230 190 230 260 Z" fill="%23ffffff" opacity="0.9"/><text x="150" y="285" font-family="Arial, sans-serif" font-weight="900" font-size="28" fill="%23ffffff" text-anchor="middle">${encodeURIComponent(initials)}</text></svg>`;
     }
 
-    const TEAMS_DATABASE = [
-      {
-        id: "parivision",
-        rank: 1,
-        name: "PARIVISION",
-        logoSvg: LOGO_PARIVISION,
-        rating: "3.37",
-        region: "WEU",
-        regionFlag: "🇪🇺",
-        games: 263,
-        wins: 172,
-        losses: 91,
-        winrate: "65%",
-        prize: "$3 800 069",
-        roster: [
-          { pos: "1", role: "Carry", nick: "Satanic", real: "Alan Gallyamov", flag: "🇷🇺", avatar: createPlayerAvatar("SATANIC", ["#059669", "#047857"]), rank: "1", wr: "68%" },
-          { pos: "2", role: "Mid", nick: "No[o]ne-", real: "Volodymyr Minenko", flag: "🇺🇦", avatar: createPlayerAvatar("NO[O]NE", ["#0284c7", "#0369a1"]), rank: "2", wr: "64%" },
-          { pos: "3", role: "Offlane", nick: "Noticed", real: "Evgeny Ignatenko", flag: "🇷🇺", avatar: createPlayerAvatar("NOTICED", ["#d97706", "#b45309"]), rank: "3", wr: "62%" },
-          { pos: "4", role: "Soft Support", nick: "9Class", real: "Edgar Naltakian", flag: "🇷🇺", avatar: createPlayerAvatar("9CLASS", ["#7c3aed", "#6d28d9"]), rank: "4", wr: "65%" },
-          { pos: "5", role: "Hard Support", nick: "Dukalis", real: "Andrey Kuropatkin", flag: "🇷🇺", avatar: createPlayerAvatar("DUKALIS", ["#e11d48", "#be123c"]), rank: "5", wr: "63%" }
-        ]
-      },
-      {
-        id: "falcons",
-        rank: 2,
-        name: "Team Falcons",
-        logoSvg: `<svg viewBox="0 0 100 100" class="w-14 h-14 fill-emerald-500"><path d="M50 5 L85 25 L85 65 L50 95 L15 65 L15 25 Z"/></svg>`,
-        rating: "3.26",
-        region: "MESWA",
-        regionFlag: "🇸🇦",
-        games: 306,
-        wins: 190,
-        losses: 116,
-        winrate: "62%",
-        prize: "$2 950 000",
-        roster: [
-          { pos: "1", role: "Carry", nick: "skiter", real: "Oliver Lepko", flag: "🇸🇰", avatar: createPlayerAvatar("SKITER", ["#059669", "#047857"]), rank: "1", wr: "69%" },
-          { pos: "2", role: "Mid", nick: "Malr1ne", real: "Станислав Поторак", flag: "🇷🇺", avatar: createPlayerAvatar("MALR1NE", ["#0284c7", "#0369a1"]), rank: "2", wr: "70%" },
-          { pos: "3", role: "Offlane", nick: "ATF", real: "Ammar Al-Assaf", flag: "🇯🇴", avatar: createPlayerAvatar("ATF", ["#d97706", "#b45309"]), rank: "3", wr: "72%" },
-          { pos: "4", role: "Soft Support", nick: "Cr1t-", real: "Andreas Nielsen", flag: "🇩🇰", avatar: createPlayerAvatar("CR1T", ["#7c3aed", "#6d28d9"]), rank: "4", wr: "65%" },
-          { pos: "5", role: "Hard Support", nick: "Sneyking", real: "Jingjun Wu", flag: "🇺🇸", avatar: createPlayerAvatar("SNEYKING", ["#e11d48", "#be123c"]), rank: "5", wr: "64%" }
-        ]
+    // Загрузка данных из Supabase
+    async function loadDataFromSupabase() {
+      try {
+        const [teamsRes, playersRes] = await Promise.all([
+          db.from('teams').select('*').order('rank', { ascending: true }),
+          db.from('players').select('*')
+        ]);
+
+        if (teamsRes.error) throw teamsRes.error;
+        if (playersRes.error) throw playersRes.error;
+
+        TEAMS_CACHE = teamsRes.data || [];
+        PLAYERS_CACHE = playersRes.data || [];
+
+        document.getElementById('loadingIndicator').classList.add('hidden');
+        navigate('teams-ranking');
+      } catch (err) {
+        document.getElementById('loadingIndicator').innerHTML = `
+          <div class="text-rose-500 font-bold">Ошибка подключения к базе Supabase: ${err.message}</div>
+          <p class="text-xs text-zinc-500 mt-1">Проверьте правильность вставки SUPABASE_KEY в index.html</p>
+        `;
       }
-    ];
+    }
 
     function navigate(pageId) {
-      ['home', 'teams-ranking', 'team-details', 'pro-players', 'tournaments'].forEach(p => {
+      ['teams-ranking', 'team-details', 'pro-players'].forEach(p => {
         const el = document.getElementById(`page-${p}`);
         if (el) el.classList.add('hidden');
         const navEl = document.getElementById(`nav-${p}`);
         if (navEl) navEl.classList.remove('nav-btn-active');
       });
 
-      document.getElementById(`page-${pageId}`).classList.remove('hidden');
+      const target = document.getElementById(`page-${pageId}`);
+      if (target) target.classList.remove('hidden');
+
       const activeNav = document.getElementById(`nav-${pageId}`);
       if (activeNav) activeNav.classList.add('nav-btn-active');
 
@@ -256,10 +204,10 @@
       if (pageId === 'pro-players') renderProPlayersCatalog();
     }
 
-    function renderTeamsTable(filtered = TEAMS_DATABASE) {
+    function renderTeamsTable() {
       const tbody = document.getElementById('teamsTableBody');
       tbody.innerHTML = '';
-      filtered.forEach(t => {
+      TEAMS_CACHE.forEach(t => {
         tbody.innerHTML += `
           <tr onclick="openTeamDetails('${t.id}')" class="hover:bg-[#181c2b] cursor-pointer transition">
             <td class="py-3.5 px-4 font-bold text-zinc-400">
@@ -267,63 +215,67 @@
             </td>
             <td class="py-3.5 px-4">
               <div class="flex items-center gap-3">
-                <div class="w-7 h-7 flex items-center justify-center">${t.logoSvg}</div>
+                <div class="w-7 h-7 rounded-lg bg-rose-600/20 text-rose-400 font-black flex items-center justify-center text-xs">
+                  ${t.name.substring(0,2)}
+                </div>
                 <span class="font-extrabold text-sm text-white hover:text-rose-400 transition">${t.name}</span>
               </div>
             </td>
             <td class="py-3.5 px-3 text-center font-mono font-bold text-zinc-200">${t.rating}</td>
-            <td class="py-3.5 px-3 text-center"><span class="text-xs font-semibold text-zinc-300">${t.regionFlag} ${t.region}</span></td>
+            <td class="py-3.5 px-3 text-center"><span class="text-xs font-semibold text-zinc-300">${t.region_flag || ''} ${t.region}</span></td>
             <td class="py-3.5 px-3 text-center font-mono text-zinc-400">${t.games}</td>
-            <td class="py-3.5 px-4 text-right font-black text-emerald-400 font-mono">${t.winrate}</td>
+            <td class="py-3.5 px-4 text-right font-black text-emerald-400 font-mono">${t.winrate}%</td>
           </tr>
         `;
       });
     }
 
     function openTeamDetails(teamId) {
-      const t = TEAMS_DATABASE.find(item => item.id === teamId) || TEAMS_DATABASE[0];
+      const t = TEAMS_CACHE.find(item => item.id === teamId) || TEAMS_CACHE[0];
+      const teamPlayers = PLAYERS_CACHE.filter(p => p.team_id === teamId);
+
       navigate('team-details');
 
       document.getElementById('teamHeaderName').textContent = t.name;
-      document.getElementById('teamLogoWrap').innerHTML = t.logoSvg;
-      document.getElementById('teamRegionBadge').textContent = `${t.regionFlag} ${t.region}`;
+      document.getElementById('teamLogoWrap').innerHTML = `
+        <div class="w-full h-full rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-2xl font-black text-white">
+          ${t.name.substring(0,2)}
+        </div>
+      `;
+      document.getElementById('teamRegionBadge').textContent = `${t.region_flag || ''} ${t.region}`;
       document.getElementById('teamRankPos').textContent = `Ранг #${t.rank}`;
       document.getElementById('teamMapsPlayed').textContent = `${t.games} (за год)`;
       document.getElementById('teamPrizeTotal').textContent = t.prize;
-      document.getElementById('teamRatingScore').textContent = t.rating;
 
       document.getElementById('teamWinLossText').textContent = `${t.wins}W - ${t.losses}L`;
-      document.getElementById('teamWinBar').style.width = t.winrate;
-      document.getElementById('teamLossBar').style.width = `${100 - parseInt(t.winrate)}%`;
-      document.getElementById('teamWinPctText').textContent = `${t.winrate} Winrate`;
+      document.getElementById('teamWinBar').style.width = `${t.winrate}%`;
+      document.getElementById('teamLossBar').style.width = `${100 - t.winrate}%`;
 
-      // Генерация 5 карточек игроков
       const rosterCards = document.getElementById('mainRosterCards');
       rosterCards.innerHTML = '';
-      t.roster.forEach(p => {
+      teamPlayers.forEach(p => {
         rosterCards.innerHTML += `
           <div class="bg-white rounded-2xl p-3.5 shadow-2xl border border-zinc-200 text-zinc-900 flex flex-col justify-between overflow-hidden">
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-[10px] font-black uppercase bg-zinc-900 text-white px-2 py-0.5 rounded tracking-wider">${p.role}</span>
-                <span class="text-xs font-bold">${p.flag}</span>
+                <span class="text-xs font-bold">${p.country_flag || '🌍'}</span>
               </div>
               
-              <!-- Аватар игрока -->
-              <div class="relative w-full h-44 rounded-xl overflow-hidden bg-zinc-900 mb-3 border border-zinc-200 shadow-inner">
-                <img src="${p.avatar}" class="w-full h-full object-cover" alt="${p.nick}">
+              <div class="relative w-full h-40 rounded-xl overflow-hidden bg-zinc-900 mb-3 border border-zinc-200 shadow-inner">
+                <img src="${getPlayerAvatarSvg(p.nick)}" class="w-full h-full object-cover">
                 <div class="absolute bottom-1.5 right-1.5 bg-amber-500 text-black font-black text-[9px] px-1.5 py-0.5 rounded shadow">
-                  #${p.rank}
+                  #${p.pos}
                 </div>
               </div>
               
               <h4 class="font-black text-base text-zinc-950 leading-tight">${p.nick}</h4>
-              <p class="text-[11px] text-zinc-500 font-medium">${p.real}</p>
+              <p class="text-[11px] text-zinc-500 font-medium">${p.real_name || ''}</p>
             </div>
 
             <div class="mt-3 pt-2.5 border-t border-zinc-100 flex justify-between items-center text-xs">
-              <span class="text-zinc-500 text-[10px]">Винрейт: <b class="text-emerald-600">${p.wr}</b></span>
-              <span class="text-rose-600 font-bold text-xs cursor-pointer">Профиль →</span>
+              <span class="text-zinc-500 text-[10px]">Винрейт: <b class="text-emerald-600">${p.winrate || '60%'}</b></span>
+              <span class="text-rose-600 font-bold text-xs">Карта →</span>
             </div>
           </div>
         `;
@@ -333,33 +285,25 @@
     function renderProPlayersCatalog() {
       const catalog = document.getElementById('proPlayersCatalog');
       catalog.innerHTML = '';
-      TEAMS_DATABASE.forEach(t => {
-        t.roster.forEach(p => {
-          catalog.innerHTML += `
-            <div class="bg-[#121520] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl cursor-pointer transition group shadow-lg text-center">
-              <div class="w-20 h-20 rounded-2xl overflow-hidden mx-auto mb-3 border border-zinc-700">
-                <img src="${p.avatar}" class="w-full h-full object-cover">
-              </div>
-              <h4 class="font-black text-white text-sm">${p.flag} ${p.nick}</h4>
-              <p class="text-[11px] text-zinc-400 mt-0.5">${t.name} • ${p.role}</p>
-              <div class="mt-3 pt-2 border-t border-zinc-800 flex justify-between text-xs">
-                <span class="text-zinc-500">Винрейт: <b class="text-emerald-400">${p.wr}</b></span>
-                <span class="text-emerald-400 font-mono font-bold">${t.prize}</span>
-              </div>
+      PLAYERS_CACHE.forEach(p => {
+        catalog.innerHTML += `
+          <div class="bg-[#121520] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl transition group shadow-lg text-center">
+            <div class="w-20 h-20 rounded-2xl overflow-hidden mx-auto mb-3 border border-zinc-700">
+              <img src="${getPlayerAvatarSvg(p.nick)}" class="w-full h-full object-cover">
             </div>
-          `;
-        });
+            <h4 class="font-black text-white text-sm">${p.country_flag || ''} ${p.nick}</h4>
+            <p class="text-[11px] text-zinc-400 mt-0.5">${p.team_id?.toUpperCase()} • ${p.role}</p>
+            <div class="mt-3 pt-2 border-t border-zinc-800 flex justify-between text-xs">
+              <span class="text-zinc-500">Винрейт: <b class="text-emerald-400">${p.winrate || '60%'}</b></span>
+              <span class="text-emerald-400 font-mono font-bold">${p.prize || '$0'}</span>
+            </div>
+          </div>
+        `;
       });
     }
 
-    function filterTeams(q) {
-      const query = q.toLowerCase().trim();
-      const filtered = TEAMS_DATABASE.filter(t => t.name.toLowerCase().includes(query) || t.region.toLowerCase().includes(query));
-      renderTeamsTable(filtered);
-    }
-
-    // Запуск со страницы рейтинга
-    navigate('teams-ranking');
+    // Инициализация при старте
+    loadDataFromSupabase();
   </script>
 </body>
 </html>
