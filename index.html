@@ -27,9 +27,6 @@
           <button onclick="navigate('teams-ranking')" id="nav-teams-ranking" class="nav-btn-active py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
             <i class="fa-solid fa-shield"></i> Рейтинг команд
           </button>
-          <button onclick="navigate('tournaments')" id="nav-tournaments" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-trophy"></i> Турниры
-          </button>
         </nav>
       </div>
     </div>
@@ -75,8 +72,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
           <div class="lg:col-span-4 flex items-center gap-5">
-            <div class="w-24 h-24 rounded-2xl bg-[#181c2b] border border-zinc-700 p-2 flex items-center justify-center flex-shrink-0 shadow-lg">
-              <img id="teamLogoImg" class="w-full h-full object-contain" src="" alt="Team Logo">
+            <div class="w-24 h-24 rounded-2xl bg-[#181c2b] border border-zinc-700 p-2 flex items-center justify-center flex-shrink-0 shadow-lg overflow-hidden">
+              <img id="teamLogoImg" class="w-full h-full object-contain" src="" alt="Logo">
             </div>
             <div>
               <h2 id="teamHeaderName" class="text-2xl font-black text-white"></h2>
@@ -121,10 +118,10 @@
         </div>
       </div>
 
-      <!-- КАРТОЧКИ С НАСТОЯЩИМИ ФОТОГРАФИЯМИ ИГРОКОВ -->
+      <!-- КАРТОЧКИ MAIN ROSTER С РЕАЛЬНЫМИ ЛИЦАМИ -->
       <div class="space-y-3">
         <h3 class="font-black text-sm uppercase tracking-wider text-white flex items-center gap-2">
-          <i class="fa-solid fa-users text-rose-500"></i> Main Roster (Активный состав 5x5)
+          <i class="fa-solid fa-users text-rose-500"></i> MAIN ROSTER (АКТИВНЫЙ СОСТАВ 5X5)
         </h3>
         <div id="mainRosterCards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
       </div>
@@ -137,13 +134,18 @@
   </footer>
 
   <script>
-    // БАЗА ДАННЫХ С ПРЯМЫМИ CDN-ФОТОГРАФИЯМИ И ЛОГОТИПАМИ
+    // ФУНКЦИЯ ОБХОДА 403 FORBIDDEN ЧЕРЕЗ КЭШ-ПРОКСИ WSRV.NL
+    function getSafeImageUrl(url) {
+      return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=400&output=webp`;
+    }
+
+    // БАЗА ДАННЫХ PARIVISION & TEAM SPIRIT
     const TEAMS_DATABASE = [
       {
         id: "parivision",
         rank: 1,
         name: "PARIVISION",
-        logo: "https://liquipedia.net/commons/images/thumb/5/5a/PARIVISION_2024_allmode.png/240px-PARIVISION_2024_allmode.png",
+        logo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/5/5a/PARIVISION_2024_allmode.png/240px-PARIVISION_2024_allmode.png"),
         rating: "3.37",
         region: "WEU",
         regionFlag: "🇪🇺",
@@ -155,27 +157,27 @@
         roster: [
           { 
             pos: "1", role: "Carry", nick: "Satanic", real: "Alan Gallyamov", flag: "🇷🇺", 
-            photo: "https://liquipedia.net/commons/images/thumb/1/1a/Satanic_at_Riyadh_Masters_2024.jpg/300px-Satanic_at_Riyadh_Masters_2024.jpg",
+            photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/1/1a/Satanic_at_Riyadh_Masters_2024.jpg/300px-Satanic_at_Riyadh_Masters_2024.jpg"),
             wr: "68%" 
           },
           { 
             pos: "2", role: "Mid", nick: "No[o]ne-", real: "Volodymyr Minenko", flag: "🇺🇦", 
-            photo: "https://liquipedia.net/commons/images/thumb/a/a2/No%5Bo%5Dne-_at_Riyadh_Masters_2024.jpg/300px-No%5Bo%5Dne-_at_Riyadh_Masters_2024.jpg",
+            photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/a/a2/No%5Bo%5Dne-_at_Riyadh_Masters_2024.jpg/300px-No%5Bo%5Dne-_at_Riyadh_Masters_2024.jpg"),
             wr: "64%" 
           },
           { 
             pos: "3", role: "Offlane", nick: "Noticed", real: "Evgeny Ignatenko", flag: "🇷🇺", 
-            photo: "https://liquipedia.net/commons/images/thumb/6/6f/Noticed_at_Riyadh_Masters_2024.jpg/300px-Noticed_at_Riyadh_Masters_2024.jpg",
+            photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/6/6f/Noticed_at_Riyadh_Masters_2024.jpg/300px-Noticed_at_Riyadh_Masters_2024.jpg"),
             wr: "62%" 
           },
           { 
             pos: "4", role: "Soft Support", nick: "9Class", real: "Edgar Naltakian", flag: "🇷🇺", 
-            photo: "https://liquipedia.net/commons/images/thumb/d/d7/9Class_at_Riyadh_Masters_2024.jpg/300px-9Class_at_Riyadh_Masters_2024.jpg",
+            photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/d/d7/9Class_at_Riyadh_Masters_2024.jpg/300px-9Class_at_Riyadh_Masters_2024.jpg"),
             wr: "65%" 
           },
           { 
             pos: "5", role: "Hard Support", nick: "Dukalis", real: "Andrey Kuropatkin", flag: "🇷🇺", 
-            photo: "https://liquipedia.net/commons/images/thumb/6/62/Dukalis_at_Riyadh_Masters_2024.jpg/300px-Dukalis_at_Riyadh_Masters_2024.jpg",
+            photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/6/62/Dukalis_at_Riyadh_Masters_2024.jpg/300px-Dukalis_at_Riyadh_Masters_2024.jpg"),
             wr: "63%" 
           }
         ]
@@ -184,7 +186,7 @@
         id: "spirit",
         rank: 2,
         name: "Team Spirit",
-        logo: "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/teams/711938.png",
+        logo: getSafeImageUrl("https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/teams/711938.png"),
         rating: "3.26",
         region: "EEU",
         regionFlag: "🇺🇦",
@@ -194,11 +196,11 @@
         winrate: "58%",
         prize: "$28 400 000",
         roster: [
-          { pos: "1", role: "Carry", nick: "Yatoro", real: "Illya Mulyarchuk", flag: "🇺🇦", photo: "https://liquipedia.net/commons/images/thumb/5/52/Yatoro_at_Riyadh_Masters_2023.jpg/300px-Yatoro_at_Riyadh_Masters_2023.jpg", wr: "68%" },
-          { pos: "2", role: "Mid", nick: "Larl", real: "Denis Sigitov", flag: "🇷🇺", photo: "https://liquipedia.net/commons/images/thumb/7/7b/Larl_at_Riyadh_Masters_2023.jpg/300px-Larl_at_Riyadh_Masters_2023.jpg", wr: "63%" },
-          { pos: "3", role: "Offlane", nick: "Collapse", real: "Magomed Khalilov", flag: "🇷🇺", photo: "https://liquipedia.net/commons/images/thumb/a/ab/Collapse_at_Riyadh_Masters_2023.jpg/300px-Collapse_at_Riyadh_Masters_2023.jpg", wr: "67%" },
-          { pos: "4", role: "Soft Support", nick: "Mira", real: "Miroslav Kolpakov", flag: "🇺🇦", photo: "https://liquipedia.net/commons/images/thumb/0/07/Mira_at_Riyadh_Masters_2023.jpg/300px-Mira_at_Riyadh_Masters_2023.jpg", wr: "64%" },
-          { pos: "5", role: "Hard Support", nick: "Miposhka", real: "Yaroslav Naidenov", flag: "🇷🇺", photo: "https://liquipedia.net/commons/images/thumb/d/d4/Miposhka_at_Riyadh_Masters_2023.jpg/300px-Miposhka_at_Riyadh_Masters_2023.jpg", wr: "65%" }
+          { pos: "1", role: "Carry", nick: "Yatoro", real: "Illya Mulyarchuk", flag: "🇺🇦", photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/5/52/Yatoro_at_Riyadh_Masters_2023.jpg/300px-Yatoro_at_Riyadh_Masters_2023.jpg"), wr: "68%" },
+          { pos: "2", role: "Mid", nick: "Larl", real: "Denis Sigitov", flag: "🇷🇺", photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/7/7b/Larl_at_Riyadh_Masters_2023.jpg/300px-Larl_at_Riyadh_Masters_2023.jpg"), wr: "63%" },
+          { pos: "3", role: "Offlane", nick: "Collapse", real: "Magomed Khalilov", flag: "🇷🇺", photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/a/ab/Collapse_at_Riyadh_Masters_2023.jpg/300px-Collapse_at_Riyadh_Masters_2023.jpg"), wr: "67%" },
+          { pos: "4", role: "Soft Support", nick: "Mira", real: "Miroslav Kolpakov", flag: "🇺🇦", photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/0/07/Mira_at_Riyadh_Masters_2023.jpg/300px-Mira_at_Riyadh_Masters_2023.jpg"), wr: "64%" },
+          { pos: "5", role: "Hard Support", nick: "Miposhka", real: "Yaroslav Naidenov", flag: "🇷🇺", photo: getSafeImageUrl("https://liquipedia.net/commons/images/thumb/d/d4/Miposhka_at_Riyadh_Masters_2023.jpg/300px-Miposhka_at_Riyadh_Masters_2023.jpg"), wr: "65%" }
         ]
       }
     ];
@@ -224,7 +226,7 @@
             </td>
             <td class="py-3.5 px-4">
               <div class="flex items-center gap-3">
-                <img src="${t.logo}" class="w-7 h-7 object-contain" referrerpolicy="no-referrer">
+                <img src="${t.logo}" class="w-7 h-7 object-contain">
                 <span class="font-extrabold text-sm text-white hover:text-rose-400 transition">${t.name}</span>
               </div>
             </td>
@@ -243,7 +245,6 @@
 
       document.getElementById('teamHeaderName').textContent = t.name;
       document.getElementById('teamLogoImg').src = t.logo;
-      document.getElementById('teamLogoImg').setAttribute('referrerpolicy', 'no-referrer');
       document.getElementById('teamRegionBadge').textContent = `${t.regionFlag} ${t.region}`;
       document.getElementById('teamRankPos').textContent = `Ранг #${t.rank}`;
       document.getElementById('teamMapsPlayed').textContent = `${t.games} (за год)`;
@@ -268,8 +269,8 @@
               </div>
               
               <!-- Фотография игрока -->
-              <div class="w-full h-40 rounded-xl overflow-hidden bg-zinc-100 mb-3 border border-zinc-200">
-                <img src="${p.photo}" class="w-full h-full object-cover object-top" referrerpolicy="no-referrer">
+              <div class="w-full h-44 rounded-xl overflow-hidden bg-zinc-100 mb-3 border border-zinc-200">
+                <img src="${p.photo}" class="w-full h-full object-cover object-top" loading="lazy">
               </div>
               
               <h4 class="font-black text-base text-zinc-950 leading-tight">${p.nick}</h4>
@@ -285,7 +286,6 @@
       });
     }
 
-    // Старт
     navigate('teams-ranking');
   </script>
 </body>
