@@ -3,528 +3,544 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DOTA HUB — Живая статистика и киберспорт</title>
+  <title>DOTA HUB — Профессиональный рейтинг и статистика</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-    body { font-family: 'Inter', sans-serif; background-color: #090b10; color: #f3f4f6; }
-    .nav-active { color: #ffffff !important; border-bottom: 2px solid #f43f5e !important; }
-    .tab-active { background-color: #f43f5e !important; color: white !important; font-weight: 700; }
+    body { font-family: 'Inter', sans-serif; background-color: #0b0d13; color: #f3f4f6; }
+    .nav-btn-active { color: #ffffff !important; border-bottom: 2px solid #e11d48 !important; }
+    .tab-active { background-color: #e11d48 !important; color: #ffffff !important; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
-  <!-- ШАПКА -->
-  <header class="bg-[#0f121a] border-b border-zinc-800/80 sticky top-0 z-50">
+  <!-- ШАПКА САЙТА -->
+  <header class="bg-[#121520] border-b border-zinc-800 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
       
       <div class="flex items-center gap-8">
-        <div onclick="navigate('home')" class="flex items-center gap-2 cursor-pointer group">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-rose-600/30">
-            DH
-          </div>
-          <span class="font-extrabold text-sm tracking-wider text-white">DOTA HUB</span>
+        <div onclick="navigate('teams-ranking')" class="flex items-center gap-2 cursor-pointer">
+          <div class="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-rose-600/30">DH</div>
+          <span class="font-black text-sm tracking-wider text-white">DOTA HUB</span>
         </div>
 
-        <nav class="flex items-center gap-6 text-xs font-semibold">
-          <button onclick="navigate('home')" id="nav-home" class="nav-active py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5"><i class="fa-solid fa-house"></i> Главная</button>
-          <button onclick="navigate('pro-teams')" id="nav-pro-teams" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> Все команды API</button>
-          <button onclick="navigate('pro-players')" id="nav-pro-players" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5"><i class="fa-solid fa-users"></i> Про-игроки</button>
-          <button onclick="navigate('live-matches')" id="nav-live-matches" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5"><i class="fa-solid fa-gamepad"></i> Матчи</button>
+        <nav class="flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
+          <button onclick="navigate('teams-ranking')" id="nav-teams-ranking" class="nav-btn-active py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-shield"></i> Рейтинг команд
+          </button>
+          <button onclick="navigate('pro-players')" id="nav-pro-players" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-user"></i> Про-игроки
+          </button>
+          <button onclick="navigate('tournaments')" id="nav-tournaments" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-trophy"></i> Турниры
+          </button>
         </nav>
       </div>
 
-      <!-- Поиск по ID игрока -->
-      <div class="flex items-center gap-2">
-        <input id="searchPlayerId" type="text" placeholder="Steam Account ID (напр. 321580797)..." 
-               class="bg-zinc-900 border border-zinc-700/80 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500 w-48 sm:w-60">
-        <button onclick="searchPlayerById()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Найти</button>
+      <!-- Поиск команды/игрока -->
+      <div class="relative">
+        <input id="searchInput" onkeyup="filterTeams(this.value)" type="text" placeholder="Поиск команды..." 
+               class="bg-zinc-900 border border-zinc-700/80 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500 w-48 sm:w-64">
       </div>
 
     </div>
   </header>
 
-  <!-- ОСНОВНАЯ ЧАСТЬ -->
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-    <!-- 1. ГЛАВНАЯ СТРАНИЦА -->
-    <section id="page-home" class="space-y-6">
-      <div class="relative overflow-hidden bg-gradient-to-r from-rose-950/40 via-[#121520] to-[#121520] border border-rose-500/20 rounded-2xl p-6 shadow-xl">
-        <div class="max-w-2xl">
-          <span class="bg-rose-600 text-white font-bold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider">Live API OpenDota</span>
-          <h1 class="text-2xl sm:text-3xl font-black text-white mt-2">Dota 2 Real-Time Stats</h1>
-          <p class="text-xs text-zinc-400 mt-1">Прямое подключение к базе данных Valve. Загружайте статистику любой профессиональной команды и любого игрока в один клик.</p>
-          <div class="flex gap-3 mt-4">
-            <button onclick="navigate('pro-teams')" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Смотреть топ-100 команд</button>
-            <button onclick="openLivePlayer(321580797)" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-4 py-2 rounded-xl text-xs font-bold transition">Профиль Yatoro</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-8 bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="font-extrabold text-sm text-white border-b border-zinc-800 pb-3 mb-4 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span> Популярные киберспортсмены (Live Данные)
-          </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="homeQuickStars"></div>
-        </div>
-
-        <div class="lg:col-span-4 bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-lg">
-          <h2 class="font-extrabold text-sm text-white border-b border-zinc-800 pb-3 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-trophy text-amber-400"></i> Топ команд по рейтингу
-          </h2>
-          <div class="space-y-2" id="homeTopTeamsPreview">
-            <div class="text-xs text-zinc-500 py-4 text-center">Загрузка рейтинга...</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. СТРАНИЦА ВСЕХ КОМАНД (ДЕСЯТКИ КОМАНД ИЗ API С ЛОГОТИПАМИ) -->
-    <section id="page-pro-teams" class="hidden space-y-4">
-      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+    <!-- ================= 1. МИРОВОЙ РЕЙТИНГ КОМАНД (ТАБЛИЦА) ================= -->
+    <section id="page-teams-ranking" class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-3">
         <div>
-          <h2 class="text-xl font-black text-white">Профессиональные команды (OpenDota API)</h2>
-          <p class="text-xs text-zinc-400">Официальные клубы, реальные логотипы, количество побед и рейтинг Elo</p>
+          <h1 class="text-xl font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
+          </h1>
+          <p class="text-xs text-zinc-400">Мировой рейтинг профессиональных клубов • Обновлено в реальном времени</p>
         </div>
-        <span id="teamsCountBadge" class="text-xs bg-zinc-800 text-zinc-300 px-3 py-1 rounded-lg">Загрузка...</span>
       </div>
-      <div id="proTeamsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
 
-    <!-- 3. СТРАНИЦА ПРО-ИГРОКОВ (КАТАЛОГ) -->
-    <section id="page-pro-players" class="hidden space-y-4">
-      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
-        <div>
-          <h2 class="text-xl font-black text-white">Профессиональные игроки Dota 2</h2>
-          <p class="text-xs text-zinc-400">Реальные аватары со Steam, команды и страны</p>
-        </div>
-        <span id="playersCountBadge" class="text-xs bg-zinc-800 text-zinc-300 px-3 py-1 rounded-lg">Загрузка...</span>
-      </div>
-      <div id="proPlayersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-    </section>
-
-    <!-- 4. СТРАНИЦА МАТЧЕЙ -->
-    <section id="page-live-matches" class="hidden space-y-4">
-      <div class="border-b border-zinc-800 pb-3">
-        <h2 class="text-xl font-black text-white">Последние профессиональные матчи</h2>
-      </div>
-      <div id="matchesListContainer" class="space-y-3">
-        <div class="text-xs text-zinc-500 py-8 text-center">Загрузка матчей...</div>
+      <div class="bg-[#121520] border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-[#181c2b] text-zinc-400 uppercase text-[10px] font-bold border-b border-zinc-800">
+              <th class="py-3 px-4 w-16">Rank</th>
+              <th class="py-3 px-4">Team name</th>
+              <th class="py-3 px-3 text-center">Rating</th>
+              <th class="py-3 px-3 text-center">Region</th>
+              <th class="py-3 px-3 text-center">Games</th>
+              <th class="py-3 px-4 text-right">Win (%)</th>
+            </tr>
+          </thead>
+          <tbody id="teamsTableBody" class="divide-y divide-zinc-800/60"></tbody>
+        </table>
       </div>
     </section>
 
-    <!-- 5. ПОЛНАЯ КАРТОЧКА ПРОФИЛЯ ЛЮБОГО ИГРОКА (LIVE API) -->
-    <section id="page-player-profile" class="hidden space-y-5">
-      <button onclick="navigate('pro-players')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
-        <i class="fa-solid fa-arrow-left"></i> Назад к списку игроков
+    <!-- ================= 2. СТРАНИЦА КОНКРЕТНОЙ КОМАНДЫ (TEAM DETAILS) ================= -->
+    <section id="page-team-details" class="hidden space-y-6">
+      <button onclick="navigate('teams-ranking')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> Назад к рейтингу команд
       </button>
 
-      <div id="profileLoading" class="text-center py-16 text-zinc-400 hidden">
-        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-rose-500 mb-3"></i>
-        <p>Загрузка полной карты игрока из Valve API...</p>
-      </div>
-
-      <div id="profileContent" class="space-y-5">
-        <!-- Шапка игрока -->
-        <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-5 shadow-xl">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            
-            <div class="lg:col-span-3 flex items-center gap-4">
-              <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-zinc-700 bg-zinc-900 flex-shrink-0">
-                <img id="apiPlayerAvatar" src="" alt="Avatar" class="w-full h-full object-cover">
-                <div id="apiPlayerRank" class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-zinc-950/80 border border-zinc-700 text-[10px] font-bold text-amber-400">
-                  PRO
-                </div>
-              </div>
-              <div>
-                <h1 id="apiPlayerNick" class="text-xl font-black text-white"></h1>
-                <div class="text-[11px] text-emerald-400 font-semibold mt-0.5">● Verified Pro Player</div>
-                <div id="apiSteamId" class="text-[10px] font-mono text-zinc-500 mt-1"></div>
-              </div>
-            </div>
-
-            <div class="lg:col-span-5 grid grid-cols-2 gap-y-3 text-xs border-y lg:border-y-0 lg:border-l lg:border-r border-zinc-800 py-3 lg:py-0 lg:px-6">
-              <div>
-                <span class="text-zinc-500 block text-[11px]">Real Name / Profile:</span>
-                <span id="apiPlayerName" class="font-bold text-zinc-200"></span>
-              </div>
-              <div>
-                <span class="text-zinc-500 block text-[11px]">Country:</span>
-                <span id="apiPlayerLoc" class="font-bold text-rose-400 uppercase"></span>
-              </div>
-              <div>
-                <span class="text-zinc-500 block text-[11px]">Competitive Status:</span>
-                <span class="font-semibold text-emerald-400">Active</span>
-              </div>
-              <div>
-                <span class="text-zinc-500 block text-[11px]">Steam Profile:</span>
-                <a id="apiSteamLink" href="#" target="_blank" class="text-rose-400 hover:underline font-medium">Открыть Steam ↗</a>
-              </div>
-            </div>
-
-            <div class="lg:col-span-4 space-y-3">
-              <div>
-                <div class="flex justify-between text-[11px] font-bold mb-1">
-                  <span class="text-zinc-400">Карьерный винрейт</span>
-                  <span id="apiWinLossText" class="text-zinc-300"></span>
-                </div>
-                <div class="w-full h-2 bg-zinc-800 rounded-full overflow-hidden flex">
-                  <div id="apiWinBar" class="bg-emerald-500 h-full"></div>
-                  <div id="apiLossBar" class="bg-rose-500 h-full"></div>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-center pt-1">
-                <div class="bg-[#181c2b] border border-zinc-800 rounded-xl p-2.5">
-                  <div class="text-[9px] uppercase font-bold text-emerald-400">Winrate</div>
-                  <div id="apiWinratePct" class="text-base font-black text-white mt-0.5">0%</div>
-                </div>
-                <div class="bg-[#181c2b] border border-zinc-800 rounded-xl p-2.5">
-                  <div class="text-[9px] uppercase font-bold text-amber-400">Всего матчей</div>
-                  <div id="apiTotalGames" class="text-base font-black text-white mt-0.5">0</div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Две таблицы данных (Лучшие герои и Последние сыгранные матчи) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <!-- Шапка команды -->
+      <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-6 shadow-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
-          <div class="lg:col-span-6 bg-[#121520] border border-zinc-800 rounded-2xl overflow-hidden shadow-lg">
-            <div class="bg-[#181c2b] px-4 py-3 border-b border-zinc-800 flex justify-between items-center">
-              <h3 class="text-xs font-bold uppercase text-white flex items-center gap-2">
-                <i class="fa-solid fa-masks-theater text-rose-500"></i> Топ сигнатурные герои
-              </h3>
-              <span class="text-[10px] text-zinc-400">За всю историю</span>
+          <div class="lg:col-span-4 flex items-center gap-5">
+            <div id="teamLogoWrap" class="w-24 h-24 rounded-2xl bg-zinc-900 border border-zinc-700 p-2 flex items-center justify-center flex-shrink-0 shadow-lg"></div>
+            <div>
+              <h2 id="teamHeaderName" class="text-2xl font-black text-white"></h2>
+              <div class="flex items-center gap-2 mt-1">
+                <span id="teamRegionBadge" class="text-xs font-bold px-2 py-0.5 rounded bg-zinc-800 text-zinc-300"></span>
+                <span id="teamRankPos" class="text-xs font-mono font-bold text-amber-400"></span>
+              </div>
             </div>
-            <div id="apiHeroesTable" class="divide-y divide-zinc-800/60 text-xs"></div>
           </div>
 
-          <div class="lg:col-span-6 bg-[#121520] border border-zinc-800 rounded-2xl overflow-hidden shadow-lg">
-            <div class="bg-[#181c2b] px-4 py-3 border-b border-zinc-800 flex justify-between items-center">
-              <h3 class="text-xs font-bold uppercase text-white flex items-center gap-2">
-                <i class="fa-solid fa-gamepad text-rose-500"></i> Последние 10 матчей
-              </h3>
-              <span class="text-[10px] text-zinc-400">Recent Games</span>
+          <div class="lg:col-span-4 grid grid-cols-2 gap-y-3 text-xs border-y lg:border-y-0 lg:border-l lg:border-r border-zinc-800 py-3 lg:py-0 lg:px-6">
+            <div>
+              <span class="text-zinc-500 block text-[11px]">Maps played:</span>
+              <span id="teamMapsPlayed" class="font-bold text-zinc-200"></span>
             </div>
-            <div id="apiRecentMatchesTable" class="divide-y divide-zinc-800/60 text-xs"></div>
+            <div>
+              <span class="text-zinc-500 block text-[11px]">Events:</span>
+              <span id="teamEventsCount" class="font-bold text-zinc-200">35</span>
+            </div>
+            <div>
+              <span class="text-zinc-500 block text-[11px]">Prize money:</span>
+              <span id="teamPrizeTotal" class="font-bold text-emerald-400 font-mono text-sm"></span>
+            </div>
+            <div>
+              <span class="text-zinc-500 block text-[11px]">Rating:</span>
+              <span id="teamRatingScore" class="font-mono font-bold text-rose-400"></span>
+            </div>
+          </div>
+
+          <!-- Прогресс-бар винрейта -->
+          <div class="lg:col-span-4 space-y-2">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-zinc-400">Винрейт команды</span>
+              <span id="teamWinLossText" class="text-zinc-200"></span>
+            </div>
+            <div class="w-full h-2.5 bg-zinc-800 rounded-full overflow-hidden flex">
+              <div id="teamWinBar" class="bg-emerald-500 h-full"></div>
+              <div id="teamLossBar" class="bg-rose-500 h-full"></div>
+            </div>
+            <div class="text-right text-xs font-black text-emerald-400" id="teamWinPctText"></div>
           </div>
 
         </div>
       </div>
+
+      <!-- MAIN ROSTER (5 КАРТОЧЕК ИГРОКОВ С РОЛЯМИ) -->
+      <div class="space-y-3">
+        <h3 class="font-black text-sm uppercase tracking-wider text-white flex items-center gap-2">
+          <i class="fa-solid fa-users text-rose-500"></i> Main Roster (Активный состав 5x5)
+        </h3>
+        <div id="mainRosterCards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
+      </div>
+    </section>
+
+    <!-- ================= 3. СТРАНИЦА ИГРОКА (PLAYER DETAILS) ================= -->
+    <section id="page-player-details" class="hidden space-y-6">
+      <button onclick="navigate('teams-ranking')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> Назад
+      </button>
+
+      <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-6 shadow-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          
+          <div class="lg:col-span-4 flex items-center gap-5">
+            <div id="playerAvatarBox" class="w-24 h-24 rounded-2xl bg-zinc-900 border-2 border-rose-500/40 overflow-hidden flex-shrink-0 shadow-lg"></div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="playerFlagEmoji" class="text-lg"></span>
+                <h2 id="playerNickTitle" class="text-2xl font-black text-white"></h2>
+              </div>
+              <p id="playerRealNameSubtitle" class="text-xs text-zinc-400 mt-0.5"></p>
+              <div class="mt-2 flex gap-1.5">
+                <span id="playerRoleBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 grid grid-cols-2 gap-y-3 text-xs border-y lg:border-y-0 lg:border-l lg:border-r border-zinc-800 py-3 lg:py-0 lg:px-6">
+            <div>
+              <span class="text-zinc-500 block text-[11px]">Team:</span>
+              <span id="playerTeamName" class="font-bold text-zinc-200"></span>
+            </div>
+            <div>
+              <span class="text-zinc-500 block text-[11px]">Date of birth:</span>
+              <span id="playerBirthDate" class="font-bold text-zinc-200"></span>
+            </div>
+            <div>
+              <span class="text-zinc-500 block text-[11px]">Prize money:</span>
+              <span id="playerPrizeSum" class="font-bold text-emerald-400 font-mono text-sm"></span>
+            </div>
+            <div>
+              <span class="text-zinc-500 block text-[11px]">Status:</span>
+              <span class="font-bold text-emerald-400">Active Pro</span>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 grid grid-cols-3 gap-2 text-center">
+            <div class="bg-[#181c2b] border border-zinc-800 rounded-xl p-3">
+              <div class="text-[9px] uppercase font-bold text-emerald-400">Winrate</div>
+              <div id="playerStatWinrate" class="text-base font-black text-white mt-0.5"></div>
+            </div>
+            <div class="bg-[#181c2b] border border-zinc-800 rounded-xl p-3">
+              <div class="text-[9px] uppercase font-bold text-amber-400">KDA</div>
+              <div id="playerStatKDA" class="text-base font-black text-white mt-0.5"></div>
+            </div>
+            <div class="bg-[#181c2b] border border-zinc-800 rounded-xl p-3">
+              <div class="text-[9px] uppercase font-bold text-purple-400">GPM / XPM</div>
+              <div id="playerStatGPM" class="text-xs font-black text-white mt-1"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Сигнатурные герои игрока -->
+      <div class="space-y-3">
+        <h3 class="font-black text-sm uppercase tracking-wider text-white">Пул сигнатурных героев</h3>
+        <div id="playerHeroesPool" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- ================= 4. КАТАЛОГ ПРО-ИГРОКОВ ================= -->
+    <section id="page-pro-players" class="hidden space-y-4">
+      <div class="border-b border-zinc-800 pb-3">
+        <h2 class="text-xl font-black text-white">Профессиональные игроки Dota 2</h2>
+        <p class="text-xs text-zinc-400">Только подтвержденные игроки тир-1 и тир-2 команд</p>
+      </div>
+      <div id="proPlayersCatalog" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+    </section>
+
+    <!-- ================= 5. ТУРНИРЫ ================= -->
+    <section id="page-tournaments" class="hidden space-y-4">
+      <div class="border-b border-zinc-800 pb-3">
+        <h2 class="text-xl font-black text-white">Главные турниры сезона 2026</h2>
+      </div>
+      <div id="tournamentsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
     </section>
 
   </main>
 
   <footer class="border-t border-zinc-900 bg-[#07080d] py-5 text-center text-xs text-zinc-600">
-    <p>© 2026 DOTA HUB • Работает на базе открытого API Valve & OpenDota</p>
+    <p>© 2026 DOTA HUB • Рейтинговый киберспортивный портал Dota 2</p>
   </footer>
 
   <script>
-    // Глобальные кэши
-    let HEROES_MAP = {};
-    let PRO_PLAYERS_LIST = [];
-    let PRO_TEAMS_LIST = [];
-
-    // Звезды для главной
-    const FEATURED_STARS = [
-      { id: 321580797, name: "Yatoro", team: "Team Spirit", country: "🇺🇦" },
-      { id: 89871502, name: "Paparazi", team: "Team Refuser", country: "🇨🇳" },
-      { id: 181716195, name: "Malr1ne", team: "Team Falcons", country: "🇷🇺" },
-      { id: 101695162, name: "Nisha", team: "Team Liquid", country: "🇵🇱" },
-      { id: 94054712, name: "Topson", team: "Tundra", country: "🇫🇮" },
-      { id: 38461492, name: "Collapse", team: "Team Spirit", country: "🇷🇺" }
+    // 1. БАЗА ДАННЫХ КОМАНД С АКТУАЛЬНЫМИ СОСТАВАМИ
+    const TEAMS_DATABASE = [
+      {
+        id: "parivision",
+        rank: 1,
+        name: "PARIVISION",
+        logo: "https://liquipedia.net/commons/images/thumb/7/7b/Paparazi%E2%80%A6_at_Riyadh_Masters_2023.jpg/80px-Paparazi%E2%80%A6_at_Riyadh_Masters_2023.jpg",
+        rating: "3.37",
+        region: "WEU",
+        regionFlag: "🇪🇺",
+        games: 263,
+        wins: 172,
+        losses: 91,
+        winrate: "65%",
+        prize: "$3 800 069",
+        roster: [
+          { id: "satanic", pos: "1", role: "Carry", nick: "Satanic", real: "Alan Gallyamov", flag: "🇷🇺", birth: "20.10.2007 (18 y.o.)", prize: "$420 000", wr: "68%", kda: "8.90", gpm: "780 / 820" },
+          { id: "noone", pos: "2", role: "Mid", nick: "No[o]ne-", real: "Volodymyr Minenko", flag: "🇺🇦", birth: "04.09.1997 (28 y.o.)", prize: "$1 950 000", wr: "64%", kda: "7.80", gpm: "670 / 720" },
+          { id: "noticed", pos: "3", role: "Offlane", nick: "Noticed", real: "Evgeny Ignatenko", flag: "🇷🇺", birth: "08.05.2002 (24 y.o.)", prize: "$310 000", wr: "62%", kda: "6.90", gpm: "540 / 640" },
+          { id: "9class", pos: "4", role: "Soft Support", nick: "9Class", real: "Edgar Naltakian", flag: "🇷🇺", birth: "02.04.2003 (23 y.o.)", prize: "$280 000", wr: "65%", kda: "6.10", gpm: "430 / 590" },
+          { id: "dukalis", pos: "5", role: "Hard Support", nick: "Dukalis", real: "Andrey Kuropatkin", flag: "🇷🇺", birth: "24.05.2002 (24 y.o.)", prize: "$340 000", wr: "63%", kda: "5.40", gpm: "390 / 520" }
+        ]
+      },
+      {
+        id: "falcons",
+        rank: 2,
+        name: "Team Falcons",
+        rating: "3.26",
+        region: "MESWA",
+        regionFlag: "🇸🇦",
+        games: 306,
+        wins: 190,
+        losses: 116,
+        winrate: "62%",
+        prize: "$2 950 000",
+        roster: [
+          { id: "skiter", pos: "1", role: "Carry", nick: "skiter", real: "Oliver Lepko", flag: "🇸🇰", birth: "12.09.1998 (27 y.o.)", prize: "$2 300 000", wr: "69%", kda: "7.60", gpm: "710 / 740" },
+          { id: "malr1ne", pos: "2", role: "Mid", nick: "Malr1ne", real: "Станислав Поторак", flag: "🇷🇺", birth: "18.10.2004 (21 y.o.)", prize: "$1 150 000", wr: "70%", kda: "8.40", gpm: "680 / 750" },
+          { id: "atf", pos: "3", role: "Offlane", nick: "ATF", real: "Ammar Al-Assaf", flag: "🇯🇴", birth: "04.04.2005 (21 y.o.)", prize: "$1 200 000", wr: "72%", kda: "7.90", gpm: "620 / 690" },
+          { id: "cr1t", pos: "4", role: "Soft Support", nick: "Cr1t-", real: "Andreas Nielsen", flag: "🇩🇰", birth: "13.07.1996 (30 y.o.)", prize: "$2 600 000", wr: "65%", kda: "6.20", gpm: "450 / 580" },
+          { id: "sneyking", pos: "5", role: "Hard Support (C)", nick: "Sneyking", real: "Jingjun Wu", flag: "🇺🇸", birth: "02.05.1995 (31 y.o.)", prize: "$2 800 000", wr: "64%", kda: "5.80", gpm: "400 / 510" }
+        ]
+      },
+      {
+        id: "spirit",
+        rank: 3,
+        name: "Team Spirit",
+        rating: "3.13",
+        region: "EEU",
+        regionFlag: "🇺🇦",
+        games: 290,
+        wins: 168,
+        losses: 122,
+        winrate: "58%",
+        prize: "$28 400 000",
+        roster: [
+          { id: "yatoro", pos: "1", role: "Carry", nick: "Yatoro", real: "Илья Мулярчук", flag: "🇺🇦", birth: "12.03.2003 (23 y.o.)", prize: "$5 413 293", wr: "68%", kda: "8.94", gpm: "740 / 780" },
+          { id: "larl", pos: "2", role: "Mid", nick: "Larl", real: "Денис Сигитов", flag: "🇷🇺", birth: "22.01.2002 (24 y.o.)", prize: "$1 800 000", wr: "63%", kda: "7.10", gpm: "640 / 690" },
+          { id: "collapse", pos: "3", role: "Offlane", nick: "Collapse", real: "Магомед Халилов", flag: "🇷🇺", birth: "25.02.2002 (24 y.o.)", prize: "$5 400 000", wr: "67%", kda: "7.80", gpm: "560 / 690" },
+          { id: "mira", pos: "4", role: "Soft Support", nick: "Mira", real: "Мирослав Колпаков", flag: "🇺🇦", birth: "03.11.1999 (26 y.o.)", prize: "$5 350 000", wr: "64%", kda: "5.90", gpm: "420 / 560" },
+          { id: "miposhka", pos: "5", role: "Hard Support (C)", nick: "Miposhka", real: "Ярослав Найденов", flag: "🇷🇺", birth: "30.11.1997 (28 y.o.)", prize: "$5 600 000", wr: "65%", kda: "5.20", gpm: "380 / 500" }
+        ]
+      },
+      {
+        id: "liquid",
+        rank: 4,
+        name: "Team Liquid",
+        rating: "3.08",
+        region: "WEU",
+        regionFlag: "🇪🇺",
+        games: 342,
+        wins: 198,
+        losses: 144,
+        winrate: "58%",
+        prize: "$41 200 000",
+        roster: [
+          { id: "micke", pos: "1", role: "Carry", nick: "miCKe", real: "Michael Vu", flag: "🇸🇪", birth: "26.07.1999 (27 y.o.)", prize: "$2 900 000", wr: "63%", kda: "7.80", gpm: "720 / 760" },
+          { id: "nisha", pos: "2", role: "Mid", nick: "Nisha", real: "Michał Jankowski", flag: "🇵🇱", birth: "28.09.2000 (25 y.o.)", prize: "$3 450 000", wr: "66%", kda: "8.10", gpm: "660 / 720" },
+          { id: "saberlight", pos: "3", role: "Offlane", nick: "SabeRLighT-", real: "Jonáš Volek", flag: "🇨🇿", birth: "14.11.2000 (25 y.o.)", prize: "$650 000", wr: "61%", kda: "6.80", gpm: "550 / 640" },
+          { id: "boxi", pos: "4", role: "Soft Support", nick: "Boxi", real: "Samuel Svahn", flag: "🇸🇪", birth: "18.04.1998 (28 y.o.)", prize: "$2 800 000", wr: "62%", kda: "5.90", gpm: "430 / 570" },
+          { id: "insania", pos: "5", role: "Hard Support (C)", nick: "iNSaNiA", real: "Aydin Sarkohi", flag: "🇸🇪", birth: "12.06.1994 (32 y.o.)", prize: "$2 850 000", wr: "63%", kda: "5.30", gpm: "380 / 510" }
+        ]
+      },
+      {
+        id: "refuser",
+        rank: 5,
+        name: "Team Refuser",
+        rating: "2.85",
+        region: "CN",
+        regionFlag: "🇨🇳",
+        games: 180,
+        wins: 98,
+        losses: 82,
+        winrate: "54%",
+        prize: "$420 000",
+        roster: [
+          { id: "kagome", pos: "1", role: "Carry", nick: "Kagome", real: "Chen Yixuan", flag: "🇨🇳", birth: "14.05.2003 (23 y.o.)", prize: "$85 000", wr: "56%", kda: "6.90", gpm: "680 / 710" },
+          { id: "paparazi", pos: "2", role: "Mid", nick: "Paparazi", real: "Zhang Chengjun", flag: "🇨🇳", birth: "27.06.1996 (30 y.o.)", prize: "$1 221 596", wr: "58%", kda: "6.83", gpm: "571 / 713" },
+          { id: "invi", pos: "3", role: "Offlane", nick: "Invi", real: "Li Wenhao", flag: "🇨🇳", birth: "10.02.2001 (25 y.o.)", prize: "$110 000", wr: "53%", kda: "5.80", gpm: "510 / 600" },
+          { id: "pyw", pos: "4", role: "Soft Support", nick: "Pyw", real: "Xiong Jiahan", flag: "🇨🇳", birth: "13.08.1999 (27 y.o.)", prize: "$580 000", wr: "57%", kda: "5.50", gpm: "410 / 540" },
+          { id: "redpanda", pos: "5", role: "Hard Support", nick: "RedPanda", real: "Zhi Hao", flag: "🇨🇳", birth: "19.10.1997 (28 y.o.)", prize: "$320 000", wr: "54%", kda: "4.90", gpm: "360 / 480" }
+        ]
+      }
     ];
 
-    // Инициализация базы героев
-    async function initHeroes() {
-      try {
-        const res = await fetch('https://api.opendota.com/api/heroes');
-        const data = await res.json();
-        data.forEach(h => {
-          const shortName = h.name.replace('npc_dota_hero_', '');
-          HEROES_MAP[h.id] = {
-            name: h.localized_name,
-            icon: `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${shortName}.png`
-          };
-        });
-      } catch (e) {
-        console.error("Ошибка загрузки героев", e);
-      }
-    }
+    // Герои по ролям
+    const HERO_DATA = {
+      Carry: [{ name: "Morphling", wr: "72%", img: "morphling" }, { name: "Faceless Void", wr: "69%", img: "faceless_void" }, { name: "Terrorblade", wr: "68%", img: "terrorblade" }, { name: "Slark", wr: "74%", img: "slark" }],
+      Mid: [{ name: "Storm Spirit", wr: "64%", img: "storm_spirit" }, { name: "Invoker", wr: "59%", img: "invoker" }, { name: "Ember Spirit", wr: "66%", img: "ember_spirit" }, { name: "Puck", wr: "62%", img: "puck" }],
+      Offlane: [{ name: "Magnus", wr: "78%", img: "magnus" }, { name: "Mars", wr: "71%", img: "mars" }, { name: "Timbersaw", wr: "74%", img: "shredder" }, { name: "Centaur", wr: "68%", img: "centaur" }],
+      Support: [{ name: "Rubick", wr: "62%", img: "rubick" }, { name: "Tiny", wr: "65%", img: "tiny" }, { name: "Tusk", wr: "60%", img: "tusk" }, { name: "Earth Spirit", wr: "58%", img: "earth_spirit" }],
+      HardSupport: [{ name: "Disruptor", wr: "65%", img: "disruptor" }, { name: "Treant Protector", wr: "68%", img: "treant" }, { name: "Bane", wr: "63%", img: "bane" }, { name: "Chen", wr: "70%", img: "chen" }]
+    };
 
-    // Навигация
+    // НАВИГАЦИЯ
     function navigate(pageId) {
-      ['home', 'pro-teams', 'pro-players', 'live-matches', 'player-profile'].forEach(p => {
+      ['teams-ranking', 'team-details', 'player-details', 'pro-players', 'tournaments'].forEach(p => {
         const el = document.getElementById(`page-${p}`);
         if (el) el.classList.add('hidden');
         const navEl = document.getElementById(`nav-${p}`);
-        if (navEl) navEl.classList.remove('nav-active');
+        if (navEl) navEl.classList.remove('nav-btn-active');
       });
 
       document.getElementById(`page-${pageId}`).classList.remove('hidden');
       const activeNav = document.getElementById(`nav-${pageId}`);
-      if (activeNav) activeNav.classList.add('nav-active');
+      if (activeNav) activeNav.classList.add('nav-btn-active');
 
-      if (pageId === 'home') renderHome();
-      if (pageId === 'pro-teams') loadProTeams();
-      if (pageId === 'pro-players') loadProPlayers();
-      if (pageId === 'live-matches') loadProMatches();
+      if (pageId === 'teams-ranking') renderTeamsTable();
+      if (pageId === 'pro-players') renderProPlayersCatalog();
+      if (pageId === 'tournaments') renderTournaments();
     }
 
-    // Главная страница
-    function renderHome() {
-      const starsBox = document.getElementById('homeQuickStars');
-      starsBox.innerHTML = '';
-      FEATURED_STARS.forEach(s => {
-        starsBox.innerHTML += `
-          <div onclick="openLivePlayer(${s.id})" class="bg-[#181c2b] hover:bg-zinc-800/80 border border-zinc-800 p-3.5 rounded-xl cursor-pointer transition flex items-center justify-between group">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center font-black text-sm text-white shadow">
-                ${s.name.substring(0,2).toUpperCase()}
+    // ТАБЛИЦА РЕЙТИНГА КОМАНД
+    function renderTeamsTable(filteredList = TEAMS_DATABASE) {
+      const tbody = document.getElementById('teamsTableBody');
+      tbody.innerHTML = '';
+      filteredList.forEach(t => {
+        tbody.innerHTML += `
+          <tr onclick="openTeamDetails('${t.id}')" class="hover:bg-[#181c2b] cursor-pointer transition">
+            <td class="py-3.5 px-4 font-bold text-zinc-400">
+              <span class="w-6 h-6 rounded bg-zinc-800 flex items-center justify-center font-mono text-white text-xs">${t.rank}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-3">
+                <div class="w-7 h-7 rounded-lg bg-rose-600/20 text-rose-400 font-black flex items-center justify-center text-xs">
+                  ${t.name.substring(0,2)}
+                </div>
+                <span class="font-extrabold text-sm text-white hover:text-rose-400 transition">${t.name}</span>
               </div>
-              <div>
-                <div class="font-bold text-xs text-white group-hover:text-rose-400 transition">${s.country} ${s.name}</div>
-                <div class="text-[10px] text-zinc-500">${s.team}</div>
+            </td>
+            <td class="py-3.5 px-3 text-center font-mono font-bold text-zinc-200">${t.rating}</td>
+            <td class="py-3.5 px-3 text-center">
+              <span class="text-xs font-semibold text-zinc-300">${t.regionFlag} ${t.region}</span>
+            </td>
+            <td class="py-3.5 px-3 text-center font-mono text-zinc-400">${t.games}</td>
+            <td class="py-3.5 px-4 text-right font-black text-emerald-400 font-mono">${t.winrate}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // ОТКРЫТИЕ СТРАНИЦЫ КОМАНДЫ (ROSTER 5X5)
+    function openTeamDetails(teamId) {
+      const t = TEAMS_DATABASE.find(item => item.id === teamId) || TEAMS_DATABASE[0];
+      navigate('team-details');
+
+      document.getElementById('teamHeaderName').textContent = t.name;
+      document.getElementById('teamLogoWrap').innerHTML = `
+        <div class="w-full h-full rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-2xl font-black text-white">
+          ${t.name.substring(0,2)}
+        </div>
+      `;
+      document.getElementById('teamRegionBadge').textContent = `${t.regionFlag} ${t.region}`;
+      document.getElementById('teamRankPos').textContent = `Ранг #${t.rank}`;
+      document.getElementById('teamMapsPlayed').textContent = `${t.games} (за год)`;
+      document.getElementById('teamPrizeTotal').textContent = t.prize;
+      document.getElementById('teamRatingScore').textContent = t.rating;
+
+      document.getElementById('teamWinLossText').textContent = `${t.wins}W - ${t.losses}L`;
+      document.getElementById('teamWinBar').style.width = t.winrate;
+      document.getElementById('teamLossBar').style.width = `${100 - parseInt(t.winrate)}%`;
+      document.getElementById('teamWinPctText').textContent = `${t.winrate} Winrate`;
+
+      // Генерация 5 карточек игроков в ряд
+      const rosterCards = document.getElementById('mainRosterCards');
+      rosterCards.innerHTML = '';
+      t.roster.forEach(p => {
+        rosterCards.innerHTML += `
+          <div onclick="openPlayerDetails('${t.id}', '${p.id}')" 
+               class="bg-[#181c2b] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl cursor-pointer transition group shadow-lg flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-bold uppercase bg-zinc-900 px-2 py-0.5 rounded text-rose-400 border border-zinc-700">${p.role.split(' ')[0]}</span>
+                <span class="text-xs">${p.flag}</span>
               </div>
+              <div class="w-20 h-20 rounded-2xl bg-zinc-900 border border-zinc-700 mx-auto my-3 flex items-center justify-center text-xl font-black text-zinc-300 group-hover:scale-105 transition shadow-inner">
+                ${p.nick.substring(0,2).toUpperCase()}
+              </div>
+              <h4 class="font-black text-sm text-center text-white group-hover:text-rose-400 transition">${p.nick}</h4>
+              <p class="text-[11px] text-center text-zinc-500">${p.real}</p>
             </div>
-            <span class="text-rose-400 text-xs font-bold">Профиль →</span>
+            <div class="mt-3 pt-2 border-t border-zinc-800 text-[10px] text-zinc-400 flex justify-between">
+              <span>Винрейт: <b class="text-emerald-400">${p.wr}</b></span>
+              <span class="text-rose-400 font-bold">Карта →</span>
+            </div>
           </div>
         `;
       });
     }
 
-    // Загрузка сотен команд из API
-    async function loadProTeams() {
-      const grid = document.getElementById('proTeamsGrid');
-      if (PRO_TEAMS_LIST.length > 0) return;
+    // ОТКРЫТИЕ КАРТОЧКИ ИГРОКА
+    function openPlayerDetails(teamId, playerId) {
+      const t = TEAMS_DATABASE.find(item => item.id === teamId);
+      const p = t ? t.roster.find(item => item.id === playerId) : null;
+      if (!p) return;
 
-      grid.innerHTML = '<div class="col-span-3 text-center py-12 text-zinc-500"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-rose-500 mb-2"></i><br>Загрузка списка команд...</div>';
-      
-      try {
-        const res = await fetch('https://api.opendota.com/api/teams');
-        PRO_TEAMS_LIST = await res.json();
-        
-        document.getElementById('teamsCountBadge').textContent = `Команд в базе: ${PRO_TEAMS_LIST.length}`;
-        grid.innerHTML = '';
+      navigate('player-details');
 
-        PRO_TEAMS_LIST.slice(0, 30).forEach((t, index) => {
-          const logo = t.logo_url || 'https://via.placeholder.com/60/1e222d/ffffff?text=DOTA';
-          const winrate = (t.wins + t.losses) > 0 ? ((t.wins / (t.wins + t.losses)) * 100).toFixed(0) : 50;
+      document.getElementById('playerAvatarBox').innerHTML = `
+        <div class="w-full h-full bg-gradient-to-tr from-rose-700 to-zinc-900 flex items-center justify-center text-3xl font-black text-white">
+          ${p.nick.substring(0,2).toUpperCase()}
+        </div>
+      `;
+      document.getElementById('playerFlagEmoji').textContent = p.flag;
+      document.getElementById('playerNickTitle').textContent = p.nick;
+      document.getElementById('playerRealNameSubtitle').textContent = p.real;
+      document.getElementById('playerRoleBadge').textContent = p.role;
+      document.getElementById('playerTeamName').textContent = t.name;
+      document.getElementById('playerBirthDate').textContent = p.birth;
+      document.getElementById('playerPrizeSum').textContent = p.prize;
+      document.getElementById('playerStatWinrate').textContent = p.wr;
+      document.getElementById('playerStatKDA').textContent = p.kda;
+      document.getElementById('playerStatGPM').textContent = p.gpm;
 
-          grid.innerHTML += `
-            <div class="bg-[#121520] border border-zinc-800 p-4 rounded-2xl flex flex-col justify-between hover:border-zinc-700 transition shadow-lg">
+      // Пул героев
+      const heroCategory = p.role.includes('Carry') ? 'Carry' : (p.role.includes('Mid') ? 'Mid' : (p.role.includes('Offlane') ? 'Offlane' : 'Support'));
+      const heroes = HERO_DATA[heroCategory] || HERO_DATA['Carry'];
+      const heroesPool = document.getElementById('playerHeroesPool');
+      heroesPool.innerHTML = '';
+      heroes.forEach(h => {
+        heroesPool.innerHTML += `
+          <div class="bg-[#181c2b] border border-zinc-800 p-3.5 rounded-xl flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${h.img}.png" class="w-10 h-6 object-cover rounded shadow" onerror="this.src='https://via.placeholder.com/40x24'">
               <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-xs font-mono font-bold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded">#${index + 1}</span>
-                  <span class="text-[11px] font-mono text-amber-400 font-bold">Rating: ${t.rating.toFixed(0)}</span>
-                </div>
-                <div class="flex items-center gap-3 mb-2">
-                  <img src="${logo}" class="w-10 h-10 object-contain rounded-lg bg-zinc-900/60 p-1 border border-zinc-800" onerror="this.src='https://via.placeholder.com/40/181c2b/ffffff?text=TEAM'">
-                  <div>
-                    <h3 class="font-bold text-sm text-white">${t.name}</h3>
-                    <span class="text-[10px] text-zinc-500">Тег: [${t.tag || 'PRO'}]</span>
-                  </div>
-                </div>
-              </div>
-              <div class="flex items-center justify-between pt-3 border-t border-zinc-800/80 text-xs">
-                <span class="text-zinc-400">Побед: <b class="text-emerald-400">${t.wins}</b> / <b class="text-rose-400">${t.losses}</b></span>
-                <span class="font-bold text-zinc-200">${winrate}% WR</span>
+                <div class="font-bold text-xs text-white">${h.name}</div>
+                <div class="text-[10px] text-zinc-500">Сигнатурка</div>
               </div>
             </div>
-          `;
-        });
-
-        // Заполняем превью на главной
-        const homeTeamsBox = document.getElementById('homeTopTeamsPreview');
-        homeTeamsBox.innerHTML = '';
-        PRO_TEAMS_LIST.slice(0, 5).forEach((t, i) => {
-          homeTeamsBox.innerHTML += `
-            <div class="flex items-center justify-between p-2 rounded-lg bg-[#181c2b] text-xs">
-              <span class="font-bold text-zinc-300">#${i+1} ${t.name}</span>
-              <span class="text-emerald-400 font-mono font-bold">${t.rating.toFixed(0)}</span>
-            </div>
-          `;
-        });
-
-      } catch (e) {
-        grid.innerHTML = '<div class="col-span-3 text-red-500 text-center">Ошибка загрузки команд из API</div>';
-      }
+            <span class="font-bold text-xs text-emerald-400 font-mono">${h.wr}</span>
+          </div>
+        `;
+      });
     }
 
-    // Загрузка про-игроков со Steam-аватарами
-    async function loadProPlayers() {
-      const grid = document.getElementById('proPlayersGrid');
-      if (PRO_PLAYERS_LIST.length > 0) return;
-
-      grid.innerHTML = '<div class="col-span-4 text-center py-12 text-zinc-500"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-rose-500 mb-2"></i><br>Загрузка игроков со Steam...</div>';
-
-      try {
-        const res = await fetch('https://api.opendota.com/api/proPlayers');
-        PRO_PLAYERS_LIST = await res.json();
-
-        document.getElementById('playersCountBadge').textContent = `Игроков: ${PRO_PLAYERS_LIST.length}`;
-        grid.innerHTML = '';
-
-        PRO_PLAYERS_LIST.slice(0, 24).forEach(p => {
-          const avatar = p.avatarfull || p.avatarmedium || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
-          grid.innerHTML += `
-            <div onclick="openLivePlayer(${p.account_id})" class="bg-[#121520] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl cursor-pointer transition group shadow-lg text-center">
-              <div class="relative w-16 h-16 mx-auto mb-3">
-                <img src="${avatar}" class="w-full h-full rounded-2xl object-cover border border-zinc-700 group-hover:scale-105 transition" onerror="this.src='https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'">
-                ${p.loccountrycode ? `<span class="absolute -bottom-1 -right-1 bg-zinc-900 border border-zinc-700 text-[9px] px-1 rounded font-bold">${p.loccountrycode}</span>` : ''}
+    // КАТАЛОГ ПРО-ИГРОКОВ (ТОЛЬКО ИЗВЕСТНЫЕ СОСТАВЫ)
+    function renderProPlayersCatalog() {
+      const catalog = document.getElementById('proPlayersCatalog');
+      catalog.innerHTML = '';
+      TEAMS_DATABASE.forEach(t => {
+        t.roster.forEach(p => {
+          catalog.innerHTML += `
+            <div onclick="openPlayerDetails('${t.id}', '${p.id}')" 
+                 class="bg-[#121520] border border-zinc-800 hover:border-rose-500 p-4 rounded-2xl cursor-pointer transition group shadow-lg text-center">
+              <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-700 mx-auto mb-3 flex items-center justify-center text-lg font-black text-white group-hover:scale-105 transition shadow-inner">
+                ${p.nick.substring(0,2).toUpperCase()}
               </div>
-              <h4 class="font-bold text-white text-xs group-hover:text-rose-400 transition">${p.personaname || p.name}</h4>
-              <p class="text-[10px] text-zinc-500 mt-0.5">${p.team_name || 'Free Agent'}</p>
-              <div class="mt-3 pt-2 border-t border-zinc-800 text-[10px] text-zinc-400 flex justify-between">
-                <span>Steam ID:</span>
-                <span class="font-mono text-zinc-500">${p.account_id}</span>
+              <h4 class="font-black text-white text-sm flex items-center justify-center gap-1.5">${p.flag} ${p.nick}</h4>
+              <p class="text-[11px] text-zinc-400 mt-0.5">${t.name} • ${p.role.split(' ')[0]}</p>
+              <div class="mt-3 pt-2 border-t border-zinc-800 flex justify-between text-xs">
+                <span class="text-zinc-500">Винрейт: <b class="text-emerald-400">${p.wr}</b></span>
+                <span class="text-emerald-400 font-mono font-bold">${p.prize}</span>
               </div>
             </div>
           `;
         });
-      } catch (e) {
-        grid.innerHTML = '<div class="col-span-4 text-red-500 text-center">Ошибка загрузки игроков из API</div>';
-      }
+      });
     }
 
-    // Загрузка матчей
-    async function loadProMatches() {
-      const container = document.getElementById('matchesListContainer');
-      try {
-        const res = await fetch('https://api.opendota.com/api/proMatches');
-        const matches = await res.json();
-        container.innerHTML = '';
-
-        matches.slice(0, 15).forEach(m => {
-          const isRadWin = m.radiant_win;
-          container.innerHTML += `
-            <div class="bg-[#121520] border border-zinc-800 p-4 rounded-2xl flex items-center justify-between text-xs">
-              <div class="flex items-center gap-4">
-                <span class="font-bold ${isRadWin ? 'text-emerald-400' : 'text-zinc-400'}">${m.radiant_name || 'Radiant'}</span>
-                <span class="bg-zinc-800 px-2.5 py-1 rounded font-mono font-bold text-white">${m.radiant_score} : ${m.dire_score}</span>
-                <span class="font-bold ${!isRadWin ? 'text-emerald-400' : 'text-zinc-400'}">${m.dire_name || 'Dire'}</span>
-              </div>
-              <div class="text-right">
-                <div class="text-zinc-400 font-semibold">${m.league_name || 'Pro League'}</div>
-                <div class="text-[10px] font-mono text-zinc-500">ID: #${m.match_id}</div>
-              </div>
-            </div>
-          `;
-        });
-      } catch (e) {
-        container.innerHTML = '<div class="text-center text-red-500">Ошибка загрузки матчей</div>';
-      }
+    // ТУРНИРЫ
+    function renderTournaments() {
+      const grid = document.getElementById('tournamentsGrid');
+      grid.innerHTML = `
+        <div class="bg-[#121520] border border-zinc-800 p-5 rounded-2xl shadow-lg">
+          <span class="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">Tier 1</span>
+          <h3 class="font-black text-base text-white mt-2">The International 2026</h3>
+          <p class="text-xs text-zinc-400 mt-1">Сентябрь 2026 • Европа</p>
+          <div class="mt-4 pt-3 border-t border-zinc-800 text-xs text-emerald-400 font-mono font-bold">$3 500 000+</div>
+        </div>
+        <div class="bg-[#121520] border border-zinc-800 p-5 rounded-2xl shadow-lg">
+          <span class="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">Tier 1</span>
+          <h3 class="font-black text-base text-white mt-2">Riyadh Masters 2026</h3>
+          <p class="text-xs text-zinc-400 mt-1">Июль 2026 • Эр-Рияд 🇸🇦</p>
+          <div class="mt-4 pt-3 border-t border-zinc-800 text-xs text-emerald-400 font-mono font-bold">$5 000 000</div>
+        </div>
+      `;
     }
 
-    // Открытие полной живой карты любого игрока по ID
-    async function openLivePlayer(accountId) {
-      navigate('player-profile');
-      document.getElementById('profileContent').classList.add('hidden');
-      document.getElementById('profileLoading').classList.remove('hidden');
-
-      try {
-        const [playerRes, wlRes, heroesRes, recentRes] = await Promise.all([
-          fetch(`https://api.opendota.com/api/players/${accountId}`),
-          fetch(`https://api.opendota.com/api/players/${accountId}/wl`),
-          fetch(`https://api.opendota.com/api/players/${accountId}/heroes`),
-          fetch(`https://api.opendota.com/api/players/${accountId}/recentMatches`)
-        ]);
-
-        const player = await playerRes.json();
-        const wl = await wlRes.json();
-        const heroes = await heroesRes.json();
-        const recent = await recentRes.json();
-
-        // 1. Шапка профиля
-        const nick = player.profile?.personaname || player.profile?.name || 'Pro Player';
-        document.getElementById('apiPlayerNick').textContent = nick;
-        document.getElementById('apiPlayerName').textContent = player.profile?.name || 'Скрыто в профиле';
-        document.getElementById('apiSteamId').textContent = `Account ID: ${accountId}`;
-        document.getElementById('apiPlayerLoc').textContent = player.profile?.loccountrycode || 'WW';
-        document.getElementById('apiPlayerAvatar').src = player.profile?.avatarfull || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
-        document.getElementById('apiSteamLink').href = player.profile?.profileurl || '#';
-
-        // 2. Винрейт
-        const wins = wl.win || 0;
-        const losses = wl.lose || 0;
-        const total = wins + losses;
-        const wrPct = total > 0 ? ((wins / total) * 100).toFixed(1) : 0;
-
-        document.getElementById('apiWinLossText').textContent = `${wins} побед / ${losses} поражений`;
-        document.getElementById('apiWinBar').style.width = `${wrPct}%`;
-        document.getElementById('apiLossBar').style.width = `${100 - wrPct}%`;
-        document.getElementById('apiWinratePct').textContent = `${wrPct}%`;
-        document.getElementById('apiTotalGames').textContent = total.toLocaleString();
-
-        // 3. Таблица топ героев
-        const heroesTable = document.getElementById('apiHeroesTable');
-        heroesTable.innerHTML = '';
-        heroes.slice(0, 7).forEach(h => {
-          const hInfo = HEROES_MAP[h.hero_id] || { name: 'Герой', icon: '' };
-          const heroWr = h.games > 0 ? ((h.win / h.games) * 100).toFixed(0) : 0;
-          heroesTable.innerHTML += `
-            <div class="p-3 flex items-center justify-between hover:bg-zinc-800/30 transition">
-              <div class="flex items-center gap-3">
-                <img src="${hInfo.icon}" class="w-10 h-6 object-cover rounded shadow" onerror="this.src='https://via.placeholder.com/40x24'">
-                <div>
-                  <div class="font-bold text-zinc-100">${hInfo.name}</div>
-                  <div class="text-[10px] text-zinc-500">${h.games} игр</div>
-                </div>
-              </div>
-              <div class="text-right">
-                <span class="inline-block px-2 py-0.5 rounded font-bold text-xs ${heroWr >= 55 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-zinc-800 text-zinc-300'}">${heroWr}% WR</span>
-              </div>
-            </div>
-          `;
-        });
-
-        // 4. Последние матчи
-        const recentTable = document.getElementById('apiRecentMatchesTable');
-        recentTable.innerHTML = '';
-        recent.slice(0, 7).forEach(m => {
-          const hInfo = HEROES_MAP[m.hero_id] || { name: 'Герой', icon: '' };
-          const isRadiant = m.player_slot < 128;
-          const isWin = (isRadiant && m.radiant_win) || (!isRadiant && !m.radiant_win);
-          const duration = `${Math.floor(m.duration / 60)}:${(m.duration % 60).toString().padStart(2, '0')}`;
-
-          recentTable.innerHTML += `
-            <div class="p-3 flex items-center justify-between hover:bg-zinc-800/30 transition">
-              <div class="flex items-center gap-3">
-                <img src="${hInfo.icon}" class="w-9 h-5 object-cover rounded shadow" onerror="this.src='https://via.placeholder.com/36x20'">
-                <div>
-                  <div class="font-bold text-xs ${isWin ? 'text-emerald-400' : 'text-rose-400'}">${isWin ? 'ПОБЕДА' : 'ПОРАЖЕНИЕ'}</div>
-                  <div class="text-[10px] text-zinc-500">${hInfo.name} • ${duration}</div>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="font-mono text-xs font-bold text-zinc-200">${m.kills}/${m.deaths}/${m.assists}</div>
-                <div class="text-[10px] font-mono text-zinc-500">ID #${m.match_id}</div>
-              </div>
-            </div>
-          `;
-        });
-
-        document.getElementById('profileLoading').classList.add('hidden');
-        document.getElementById('profileContent').classList.remove('hidden');
-
-      } catch (e) {
-        document.getElementById('profileLoading').innerHTML = '<span class="text-red-500">Ошибка получения данных из Valve API</span>';
-      }
+    // ПОИСК КОМАНД
+    function filterTeams(query) {
+      const q = query.toLowerCase().trim();
+      const filtered = TEAMS_DATABASE.filter(t => t.name.toLowerCase().includes(q) || t.region.toLowerCase().includes(q));
+      renderTeamsTable(filtered);
     }
 
-    function searchPlayerById() {
-      const id = document.getElementById('searchPlayerId').value.trim();
-      if (id) openLivePlayer(id);
-    }
-
-    // Старт приложения
-    initHeroes();
-    navigate('home');
+    // Стартуем со страницы рейтинга
+    navigate('teams-ranking');
   </script>
 </body>
 </html>
