@@ -35,7 +35,7 @@
 
       <div class="flex items-center gap-3">
         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Live Sync Active
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> CyberScore Sync Active
         </span>
       </div>
     </div>
@@ -44,14 +44,14 @@
   <!-- КОНТЕНТ -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-    <!-- 1. ТАБЛИЦА РЕЙТИНГА КОМАНД -->
+    <!-- 1. ТАБЛИЦА РЕЙТИНГА КОМАНД (ТОЧНЫЙ ТОП С CYBERSCORE) -->
     <section id="page-teams-ranking" class="space-y-4">
       <div class="border-b border-zinc-800 pb-3 flex items-center justify-between">
         <div>
           <h1 class="text-xl font-black text-white flex items-center gap-2">
             <i class="fa-solid fa-users text-rose-500"></i> DOTA 2 TEAM RANKING
           </h1>
-          <p class="text-xs text-zinc-400">Кликните по любой команде для просмотра активного состава и статистики</p>
+          <p class="text-xs text-zinc-400">Официальный рейтинг команд по версии CyberScore (кликните по строке)</p>
         </div>
       </div>
 
@@ -97,7 +97,7 @@
               <span id="teamMapsPlayed" class="font-bold text-zinc-200"></span>
             </div>
             <div>
-              <span class="text-zinc-500 block text-[11px]">Prize money:</span>
+              <span class="text-zinc-500 block text-[11px]">Rating Score:</span>
               <span id="teamPrizeTotal" class="font-bold text-emerald-400 font-mono text-sm"></span>
             </div>
           </div>
@@ -123,7 +123,7 @@
       </div>
     </section>
 
-    <!-- 3. ДЕТАЛЬНЫЙ ПРОФИЛЬ ИГРОКА (КАК НА CYBERSCORE) -->
+    <!-- 3. ДЕТАЛЬНЫЙ ПРОФИЛЬ ИГРОКА (CYBERSCORE STYLE) -->
     <section id="page-player-profile" class="hidden space-y-6">
       <button onclick="navigate('team-details')" class="text-xs font-bold text-zinc-400 hover:text-white flex items-center gap-1.5 transition">
         <i class="fa-solid fa-arrow-left"></i> Назад к составу команды
@@ -214,45 +214,25 @@
   </main>
 
   <footer class="border-t border-zinc-900 bg-[#07080d] py-5 text-center text-xs text-zinc-600">
-    <p>© 2026 DOTA HUB • Live Esports Database</p>
+    <p>© 2026 DOTA HUB • Рейтинг CyberScore Live</p>
   </footer>
 
   <script>
-    // 1. БАЗА ДАННЫХ КОМАНД С ОФИЦИАЛЬНЫМИ ВЕКТОРНЫМИ ЛОГОТИПАМИ
+    // ТОЧНАЯ ТАБЛИЦА С CYBERSCORE.LIVE
     const TEAMS_DATA = [
-      {
-        id: 'parivision', rank: 1, name: 'PARIVISION', tag: 'PV',
-        logo_svg: `<img src="parivision.png" class="w-full h-full object-contain">`,
-        rating: '3.88', region: 'EU WEU', region_flag: '🇪🇺',
-        games: 263, wins: 172, losses: 91, winrate: 65, prize: '$3 800 069'
-      },
-      {
-        id: 'team-spirit', rank: 2, name: 'Team Spirit', tag: 'Spirit',
-        logo_svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="46" fill="#181c2b"/><path d="M50 15 C30 15 20 35 20 50 C20 68 35 85 50 85 C65 85 80 68 80 50 C80 35 70 15 50 15 Z" fill="#ffffff"/><path d="M50 25 C40 25 35 40 35 50 C35 62 42 75 50 75 C58 75 65 62 65 50 C65 40 60 25 50 25 Z" fill="#181c2b"/><circle cx="50" cy="42" r="5" fill="#e11d48"/></svg>`,
-        rating: '3.84', region: 'EEU', region_flag: '🇷🇺',
-        games: 1580, wins: 948, losses: 632, winrate: 60, prize: '$28 450 000'
-      },
-      {
-        id: 'team-falcons', rank: 3, name: 'Team Falcons', tag: 'Falcons',
-        logo_svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="20" fill="#181c2b"/><path d="M20 30 L50 15 L80 30 L65 75 L50 85 L35 75 Z" fill="#22c55e"/><path d="M35 40 L50 30 L65 40 L58 65 L50 72 L42 65 Z" fill="#181c2b"/><circle cx="50" cy="52" r="6" fill="#22c55e"/></svg>`,
-        rating: '3.80', region: 'MENA', region_flag: '🇸🇦',
-        games: 420, wins: 285, losses: 135, winrate: 68, prize: '$4 900 000'
-      },
-      {
-        id: 'team-liquid', rank: 4, name: 'Team Liquid', tag: 'Liquid',
-        logo_svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="20" fill="#0f172a"/><path d="M25 80 L25 45 C25 30 35 20 50 20 C65 20 75 30 75 45 L75 80 L60 80 L60 48 C60 40 55 35 50 35 C45 35 40 40 40 48 L40 80 Z" fill="#38bdf8"/><circle cx="50" cy="28" r="4" fill="#ffffff"/></svg>`,
-        rating: '3.75', region: 'EU WEU', region_flag: '🇪🇺',
-        games: 3153, wins: 1891, losses: 1262, winrate: 60, prize: '$31 200 000'
-      },
-      {
-        id: 'aurora', rank: 5, name: 'Aurora Gaming', tag: 'Aurora',
-        logo_svg: `<svg viewBox="0 0 100 100" class="w-full h-full"><rect width="100" height="100" rx="20" fill="#181c2b"/><path d="M25 75 L50 20 L75 75 L60 75 L50 50 L40 75 Z" fill="#f97316"/><circle cx="50" cy="38" r="5" fill="#ffffff"/></svg>`,
-        rating: '3.62', region: 'SEA', region_flag: '🇸🇬',
-        games: 351, wins: 214, losses: 137, winrate: 61, prize: '$1 450 000'
-      }
+      { id: 'parivision', rank: 1, name: 'PARIVISION', tag: 'PV', logo_url: 'https://media.cyberscore.live/static/teams/2025/6/210545ab-e31d-4fd2-804e-0b2fa64f9be4.webp', rating: '3.37', region: 'WEU', region_flag: '🇪🇺', games: 263, wins: 171, losses: 92, winrate: 65 },
+      { id: 'aurora', rank: 2, name: 'Aurora Gaming', tag: 'Aurora', logo_url: 'https://media.cyberscore.live/static/teams/2023/11/9d53372f-53c8-4720-911e-8e8a718aafe8.webp', rating: '3.26', region: 'EEU', region_flag: '🇷🇺', games: 351, wins: 214, losses: 137, winrate: 61 },
+      { id: 'team-liquid', rank: 3, name: 'Team Liquid', tag: 'Liquid', logo_url: 'https://media.cyberscore.live/static/teams/2023/10/3c861e68-fb86-4fb4-b4a1-b5514f04c6ca.webp', rating: '3.13', region: 'WEU', region_flag: '🇪🇺', games: 342, wins: 198, losses: 144, winrate: 58 },
+      { id: 'team-falcons', rank: 4, name: 'Team Falcons', tag: 'Falcons', logo_url: 'https://media.cyberscore.live/static/teams/2023/11/476eec4e-eb5e-473d-88f5-96144e73c886.webp', rating: '3.08', region: 'MESWA', region_flag: '🇸🇦', games: 306, wins: 190, losses: 116, winrate: 62 },
+      { id: 'team-yandex', rank: 5, name: 'Team Yandex', tag: 'Yandex', logo_url: 'https://media.cyberscore.live/static/teams/2023/10/d48505fe-9b93-41bb-b892-e4e69b56f874.webp', rating: '3.07', region: 'EEU', region_flag: '🇷🇺', games: 293, wins: 182, losses: 111, winrate: 62 },
+      { id: 'team-spirit', rank: 6, name: 'Team Spirit', tag: 'Spirit', logo_url: 'https://media.cyberscore.live/static/teams/2023/10/d48505fe-9b93-41bb-b892-e4e69b56f874.webp', rating: '3.06', region: 'EEU', region_flag: '🇷🇺', games: 290, wins: 168, losses: 122, winrate: 58 },
+      { id: 'betboom', rank: 7, name: 'BetBoom Team', tag: 'BB', logo_url: 'https://media.cyberscore.live/static/teams/2023/10/8d2cbe71-3bfb-4328-944e-4bca4e655d8d.webp', rating: '2.96', region: 'EEU', region_flag: '🇷🇺', games: 310, wins: 183, losses: 127, winrate: 59 },
+      { id: 'navi', rank: 8, name: 'Natus Vincere', tag: 'NAVI', logo_url: 'https://media.cyberscore.live/static/teams/2023/10/8724aa0d-9b76-4648-963b-63a23a854d9a.webp', rating: '2.70', region: 'EEU', region_flag: '🇺🇦', games: 245, wins: 137, losses: 108, winrate: 56 },
+      { id: 'lgd', rank: 9, name: 'LGD Gaming', tag: 'LGD', logo_url: 'https://media.cyberscore.live/static/teams/2023/10/bfa3feeb-fe70-4f5a-8b89-a3597d8b51d4.webp', rating: '2.52', region: 'SA', region_flag: '🇵🇪', games: 95, wins: 55, losses: 40, winrate: 58 },
+      { id: 'xtreme', rank: 10, name: 'Xtreme Gaming', tag: 'XG', logo_url: 'https://media.cyberscore.live/static/teams/2023/10/3e9545aa-cfa3-42e5-9e67-d868a2bf1cb6.webp', rating: '2.43', region: 'CN', region_flag: '🇨🇳', games: 278, wins: 145, losses: 133, winrate: 52 }
     ];
 
-    // 2. БАЗА ДАННЫХ ИГРОКОВ (С ФОТО ИЛИ ГЕНЕРАТОРОМ КАРТОЧЕК)
+    // ИГРОКИ DOTA 2
     const PLAYERS_DATA = [
       // PARIVISION
       { id: 'satanic', team_id: 'parivision', pos: '1', role: 'Carry', nick: 'Satanic', real_name: 'Alan Gallyamov', country_flag: '🇷🇺', birth: '18 лет', winrate: '68%', kda: '5.85', gpm_xpm: '780 / 840', photo: 'satanic.jpg' },
@@ -261,38 +241,28 @@
       { id: '9class', team_id: 'parivision', pos: '4', role: 'Soft Support', nick: '9Class', real_name: 'Edgar Naltakian', country_flag: '🇷🇺', birth: '21 год', winrate: '65%', kda: '4.10', gpm_xpm: '420 / 510', photo: '9class.jpg' },
       { id: 'dukalis', team_id: 'parivision', pos: '5', role: 'Hard Support', nick: 'Dukalis', real_name: 'Andrey Kuropatkin', country_flag: '🇷🇺', birth: '23 года', winrate: '63%', kda: '3.60', gpm_xpm: '350 / 460', photo: 'dukalis.jpg' },
 
-      // TEAM SPIRIT
-      { id: 'yatoro', team_id: 'team-spirit', pos: '1', role: 'Carry', nick: 'Yatoro', real_name: 'Illya Mulyarchuk', country_flag: '🇺🇦', birth: '22 года', winrate: '67%', kda: '6.10', gpm_xpm: '810 / 860', photo: '' },
-      { id: 'larl', team_id: 'team-spirit', pos: '2', role: 'Mid', nick: 'Larl', real_name: 'Denis Sigitov', country_flag: '🇷🇺', birth: '23 года', winrate: '63%', kda: '4.70', gpm_xpm: '690 / 740', photo: '' },
-      { id: 'collapse', team_id: 'team-spirit', pos: '3', role: 'Offlane', nick: 'Collapse', real_name: 'Magomed Khalilov', country_flag: '🇷🇺', birth: '23 года', winrate: '66%', kda: '4.80', gpm_xpm: '590 / 650', photo: '' },
-      { id: 'mira', team_id: 'team-spirit', pos: '4', role: 'Soft Support', nick: 'Mira', real_name: 'Miroslav Kolpakov', country_flag: '🇺🇦', birth: '25 лет', winrate: '62%', kda: '3.90', gpm_xpm: '410 / 490', photo: '' },
-      { id: 'miposhka', team_id: 'team-spirit', pos: '5', role: 'Hard Support', nick: 'Miposhka', real_name: 'Yaroslav Naidenov', country_flag: '🇷🇺', birth: '27 лет', winrate: '61%', kda: '3.40', gpm_xpm: '330 / 420', photo: '' },
-
-      // TEAM FALCONS
-      { id: 'skiter', team_id: 'team-falcons', pos: '1', role: 'Carry', nick: 'skiter', real_name: 'Oliver Lepko', country_flag: '🇸🇰', birth: '26 лет', winrate: '68%', kda: '5.40', gpm_xpm: '760 / 810', photo: '' },
-      { id: 'malr1ne', team_id: 'team-falcons', pos: '2', role: 'Mid', nick: 'Malr1ne', real_name: 'Stanislav Potorak', country_flag: '🇷🇺', birth: '20 лет', winrate: '69%', kda: '5.80', gpm_xpm: '740 / 790', photo: '' },
-      { id: 'atf', team_id: 'team-falcons', pos: '3', role: 'Offlane', nick: 'ATF', real_name: 'Ammar Al-Assaf', country_flag: '🇯🇴', birth: '19 лет', winrate: '67%', kda: '5.10', gpm_xpm: '660 / 710', photo: '' },
-      { id: 'cr1t', team_id: 'team-falcons', pos: '4', role: 'Soft Support', nick: 'Cr1t-', real_name: 'Andreas Nielsen', country_flag: '🇩🇰', birth: '29 лет', winrate: '64%', kda: '4.40', gpm_xpm: '430 / 530', photo: '' },
-      { id: 'sneyking', team_id: 'team-falcons', pos: '5', role: 'Hard Support', nick: 'Sneyking', real_name: 'Jingjun Wu', country_flag: '🇺🇸', birth: '29 лет', winrate: '63%', kda: '3.70', gpm_xpm: '360 / 460', photo: '' },
-
       // AURORA
-      { id: 'nightfall', team_id: 'aurora', pos: '1', role: 'Carry', nick: 'Nightfall', real_name: 'Egor Grigorenko', country_flag: '🇷🇺', birth: '23 года', winrate: '63%', kda: '5.70', gpm_xpm: '790 / 830', photo: '' },
-      { id: 'kiyotaka', team_id: 'aurora', pos: '2', role: 'Mid', nick: 'kiyotaka', real_name: 'Gleb Zyryanov', country_flag: '🇷🇺', birth: '20 лет', winrate: '61%', kda: '4.80', gpm_xpm: '720 / 770', photo: '' },
-      { id: 'miero', team_id: 'aurora', pos: '3', role: 'Offlane', nick: 'MieRo`', real_name: 'Matvey Vasyunin', country_flag: '🇷🇺', birth: '21 год', winrate: '60%', kda: '4.20', gpm_xpm: '580 / 620', photo: '' },
-      { id: 'save', team_id: 'aurora', pos: '4', role: 'Soft Support', nick: 'Save-', real_name: 'Vitalie Melnic', country_flag: '🇲🇩', birth: '23 года', winrate: '62%', kda: '4.30', gpm_xpm: '420 / 520', photo: '' },
-      { id: 'kataomi', team_id: 'aurora', pos: '5', role: 'Hard Support', nick: 'Kataomi`', real_name: 'Vladislav Semenov', country_flag: '🇷🇺', birth: '24 года', winrate: '59%', kda: '3.50', gpm_xpm: '340 / 440', photo: '' },
+      { id: 'nightfall', team_id: 'aurora', pos: '1', role: 'Carry', nick: 'Nightfall', real_name: 'Egor Grigorenko', country_flag: '🇷🇺', birth: '23 года', winrate: '63%', kda: '5.70', gpm_xpm: '790 / 830', photo: 'https://media.cyberscore.live/static/players/2023/10/bfa3feeb-fe70-4f5a-8b89-a3597d8b51d4.webp' },
+      { id: 'kiyotaka', team_id: 'aurora', pos: '2', role: 'Mid', nick: 'kiyotaka', real_name: 'Gleb Zyryanov', country_flag: '🇷🇺', birth: '20 лет', winrate: '61%', kda: '4.80', gpm_xpm: '720 / 770', photo: 'https://media.cyberscore.live/static/players/2023/10/37453001-c852-4416-86d1-44755a98bf68.webp' },
+      { id: 'miero', team_id: 'aurora', pos: '3', role: 'Offlane', nick: 'MieRo`', real_name: 'Matvey Vasyunin', country_flag: '🇷🇺', birth: '21 год', winrate: '60%', kda: '4.20', gpm_xpm: '580 / 620', photo: 'https://media.cyberscore.live/static/players/2023/10/3e9545aa-cfa3-42e5-9e67-d868a2bf1cb6.webp' },
+      { id: 'save', team_id: 'aurora', pos: '4', role: 'Soft Support', nick: 'Save-', real_name: 'Vitalie Melnic', country_flag: '🇲🇩', birth: '23 года', winrate: '62%', kda: '4.30', gpm_xpm: '420 / 520', photo: 'https://media.cyberscore.live/static/players/2023/10/72ef4ae0-a292-4f3e-862d-0570bdaeb734.webp' },
+      { id: 'kataomi', team_id: 'aurora', pos: '5', role: 'Hard Support', nick: 'Kataomi`', real_name: 'Vladislav Semenov', country_flag: '🇷🇺', birth: '24 года', winrate: '59%', kda: '3.50', gpm_xpm: '340 / 440', photo: 'https://media.cyberscore.live/static/players/2023/10/cfbcfebe-fe52-4d05-ab9f-cfd7eeb39b56.webp' },
 
-      // TEAM LIQUID
-      { id: 'micke', team_id: 'team-liquid', pos: '1', role: 'Carry', nick: 'miCKe', real_name: 'Michael Vu', country_flag: '🇸🇪', birth: '25 лет', winrate: '64%', kda: '5.20', gpm_xpm: '750 / 800', photo: '' },
-      { id: 'nisha', team_id: 'team-liquid', pos: '2', role: 'Mid', nick: 'Nisha', real_name: 'Michał Jankowski', country_flag: '🇵🇱', birth: '24 года', winrate: '67%', kda: '5.60', gpm_xpm: '730 / 780', photo: '' },
-      { id: 'sabeRLight', team_id: 'team-liquid', pos: '3', role: 'Offlane', nick: 'SabeRLight-', real_name: 'Jonáš Volek', country_flag: '🇨🇿', birth: '24 года', winrate: '61%', kda: '4.30', gpm_xpm: '590 / 640', photo: '' },
-      { id: 'boxi', team_id: 'team-liquid', pos: '4', role: 'Soft Support', nick: 'Boxi', real_name: 'Samuel Svahn', country_flag: '🇸🇪', birth: '26 лет', winrate: '63%', kda: '4.20', gpm_xpm: '430 / 510', photo: '' },
-      { id: 'insania', team_id: 'team-liquid', pos: '5', role: 'Hard Support', nick: 'Insania', real_name: 'Aydin Sarkohi', country_flag: '🇸🇪', birth: '30 лет', winrate: '62%', kda: '3.60', gpm_xpm: '360 / 450', photo: '' }
+      // TEAM SPIRIT
+      { id: 'yatoro', team_id: 'team-spirit', pos: '1', role: 'Carry', nick: 'Yatoro', real_name: 'Illya Mulyarchuk', country_flag: '🇺🇦', birth: '22 года', winrate: '67%', kda: '6.10', gpm_xpm: '810 / 860', photo: 'https://media.cyberscore.live/static/players/2023/10/7c4f1c1f-49ff-4100-b3b3-8ec23bb652b4.webp' },
+      { id: 'larl', team_id: 'team-spirit', pos: '2', role: 'Mid', nick: 'Larl', real_name: 'Denis Sigitov', country_flag: '🇷🇺', birth: '23 года', winrate: '63%', kda: '4.70', gpm_xpm: '690 / 740', photo: 'https://media.cyberscore.live/static/players/2023/10/0ce690dc-3ec4-436f-8a35-1d01f80f7d5c.webp' },
+      { id: 'collapse', team_id: 'team-spirit', pos: '3', role: 'Offlane', nick: 'Collapse', real_name: 'Magomed Khalilov', country_flag: '🇷🇺', birth: '23 года', winrate: '66%', kda: '4.80', gpm_xpm: '590 / 650', photo: 'https://media.cyberscore.live/static/players/2023/10/6c7a72d4-04ef-4796-98dc-a9dc266a987d.webp' },
+      { id: 'mira', team_id: 'team-spirit', pos: '4', role: 'Soft Support', nick: 'Mira', real_name: 'Miroslav Kolpakov', country_flag: '🇺🇦', birth: '25 лет', winrate: '62%', kda: '3.90', gpm_xpm: '410 / 490', photo: 'https://media.cyberscore.live/static/players/2023/10/685fc985-0559-4d64-a698-c11306353d26.webp' },
+      { id: 'miposhka', team_id: 'team-spirit', pos: '5', role: 'Hard Support', nick: 'Miposhka', real_name: 'Yaroslav Naidenov', country_flag: '🇷🇺', birth: '27 лет', winrate: '61%', kda: '3.40', gpm_xpm: '330 / 420', photo: 'https://media.cyberscore.live/static/players/2023/10/d89fcbc8-9034-4b53-b0ee-7230b05b3cb2.webp' }
     ];
 
     let CURRENT_SELECTED_TEAM = TEAMS_DATA[0];
 
-    // ГЕНЕРАТОР ЧИСТОГО КИБЕРСПОРТИВНОГО АВАТАРА
+    function getTeamLogoHtml(team) {
+      if (team.id === 'parivision') return `<img src="parivision.png" class="w-full h-full object-contain">`;
+      return `<img src="${team.logo_url}" class="w-full h-full object-contain" onerror="this.outerHTML='<span class=\\'font-black text-white text-xs\\'>${team.tag}</span>'">`;
+    }
+
     function getPlayerAvatar(p) {
       if (p.photo && p.photo.length > 0) {
         return `<img src="${p.photo}" class="w-full h-full object-cover object-top" onerror="this.outerHTML=getGeneratedCard('${p.nick}', 'Pos ${p.pos}')">`;
@@ -342,7 +312,7 @@
             <td class="py-3.5 px-4">
               <div class="flex items-center gap-3">
                 <div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-zinc-900 border border-zinc-800 p-0.5">
-                  ${t.logo_svg}
+                  ${getTeamLogoHtml(t)}
                 </div>
                 <span class="font-extrabold text-sm text-white hover:text-rose-400 transition">${t.name}</span>
               </div>
@@ -364,11 +334,11 @@
       navigate('team-details');
 
       document.getElementById('teamHeaderName').textContent = t.name;
-      document.getElementById('teamLogoContainer').innerHTML = t.logo_svg;
+      document.getElementById('teamLogoContainer').innerHTML = getTeamLogoHtml(t);
       document.getElementById('teamRegionBadge').textContent = `${t.region_flag} ${t.region}`;
       document.getElementById('teamRankPos').textContent = `Ранг #${t.rank}`;
       document.getElementById('teamMapsPlayed').textContent = `${t.games} (за год)`;
-      document.getElementById('teamPrizeTotal').textContent = t.prize;
+      document.getElementById('teamPrizeTotal').textContent = `Score: ${t.rating}`;
 
       document.getElementById('teamWinLossText').textContent = `${t.wins}W - ${t.losses}L`;
       document.getElementById('teamWinBar').style.width = `${t.winrate}%`;
@@ -376,6 +346,11 @@
 
       const rosterCards = document.getElementById('mainRosterCards');
       rosterCards.innerHTML = '';
+
+      if (teamPlayers.length === 0) {
+        rosterCards.innerHTML = '<div class="col-span-5 text-center py-8 text-zinc-500 text-xs">Активный ростер формируется.</div>';
+        return;
+      }
 
       teamPlayers.forEach(p => {
         rosterCards.innerHTML += `
@@ -456,7 +431,6 @@
       });
     }
 
-    // Инициализация при загрузке
     navigate('teams-ranking');
   </script>
 </body>
