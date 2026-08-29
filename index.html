@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DOTA META LAB — 127 Heroes Pro Suite</title>
+  <title>DOTA META LAB — 127 Heroes Database & Pro Drafter</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -30,9 +30,6 @@
         <nav class="flex items-center gap-2 sm:gap-6 text-xs font-bold uppercase tracking-wider">
           <button onclick="switchTab('draft')" id="nav-draft" class="nav-btn-active py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
             <i class="fa-solid fa-crosshairs"></i> <span>Драфт 5х5</span>
-          </button>
-          <button onclick="switchTab('allheroes')" id="nav-allheroes" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-users-viewfinder"></i> <span>Все герои</span>
           </button>
           <button onclick="switchTab('tierlist')" id="nav-tierlist" class="py-4 text-zinc-400 hover:text-white transition flex items-center gap-1.5">
             <i class="fa-solid fa-layer-group"></i> <span>Тир-лист</span>
@@ -129,3 +126,38 @@
         </div>
 
         <div class="lg:col-span-5 space-y-4">
+          
+          <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2.5">
+            <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-amber-400 flex items-center gap-2">
+              <i class="fa-solid fa-shield"></i> Контр-предметы против врагов
+            </h3>
+            <div id="recommendedItemsList" class="space-y-2">
+              <p class="text-zinc-500 text-xs italic py-1 text-center">Выберите врагов для подбора ключевых предметов.</p>
+            </div>
+          </div>
+
+          <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2.5">
+            <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-rose-400 flex items-center gap-2">
+              <i class="fa-solid fa-crosshairs"></i> Приоритет фокуса в тимфайте
+            </h3>
+            <div id="targetPriorityList" class="space-y-1.5">
+              <p class="text-zinc-500 text-xs italic py-1 text-center">Список целей выстроится после выбора врагов.</p>
+            </div>
+          </div>
+
+          <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2.5">
+            <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-white flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-sky-400"></i> Уязвимости вражеского драфта
+            </h3>
+            <div id="enemyWeaknessesBox" class="space-y-2 text-xs">
+              <p class="text-zinc-500 italic py-1 text-center">Выберите героев врага для анализа уязвимостей.</p>
+            </div>
+          </div>
+
+          <div class="bg-[#121520] border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2.5">
+            <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+              <i class="fa-solid fa-star"></i> Лучшие контр-пики
+            </h3>
+            <div id="recommendedPicksList" class="space-y-2">
+              <p class="text-zinc-500 text-xs italic py-1 text-center">Контр-пики рассчитаются автоматически.</p>
+            </div>
