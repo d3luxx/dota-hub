@@ -506,14 +506,27 @@
       renderHeroGrid();
     }
 
+    // ПОЛНЫЙ АНАЛИЗ ДРАФТА С ЧЕТКИМ ОГРАНИЧЕНИЕМ ДО 5/5
     function analyzeFullDraft() {
-      const stunCount = ALLY_TEAM.reduce((acc, h) => acc + (h.stun || 0), 0);
-      const pushCount = ALLY_TEAM.reduce((acc, h) => acc + (h.push || 0), 0);
-      const latePoints = ALLY_TEAM.reduce((acc, h) => acc + (h.late || 0), 0);
+      const rawStun = ALLY_TEAM.reduce((acc, h) => acc + (h.stun || 0), 0);
+      const rawPush = ALLY_TEAM.reduce((acc, h) => acc + (h.push || 0), 0);
+      const rawLate = ALLY_TEAM.reduce((acc, h) => acc + (h.late || 0), 0);
       
-      document.getElementById('metricStun').innerText = stunCount + ' / 5';
-      document.getElementById('metricPush').innerText = pushCount + ' / 5';
-      document.getElementById('metricLate').innerText = latePoints + ' / 5';
+      const stunScore = Math.min(5, rawStun);
+      const pushScore = Math.min(5, rawPush);
+      const lateScore = Math.min(5, rawLate);
+
+      const stunEl = document.getElementById('metricStun');
+      const pushEl = document.getElementById('metricPush');
+      const lateEl = document.getElementById('metricLate');
+
+      stunEl.innerText = stunScore + ' / 5';
+      pushEl.innerText = pushScore + ' / 5';
+      lateEl.innerText = lateScore + ' / 5';
+
+      stunEl.className = 'font-black ' + (stunScore >= 4 ? 'text-emerald-400' : (stunScore >= 2 ? 'text-amber-400' : 'text-rose-400'));
+      pushEl.className = 'font-black ' + (pushScore >= 4 ? 'text-emerald-400' : (pushScore >= 2 ? 'text-amber-400' : 'text-rose-400'));
+      lateEl.className = 'font-black ' + (lateScore >= 4 ? 'text-emerald-400' : (lateScore >= 2 ? 'text-amber-400' : 'text-rose-400'));
 
       let allyScore = 50;
       const enemyIds = ENEMY_TEAM.map(h => h.id);
